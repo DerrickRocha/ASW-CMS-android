@@ -1,0 +1,37 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ main ] # Triggers the workflow on push to main
+  pull_request:
+    branches: [ main ] # Triggers the workflow on pull requests targeting main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Specifies the runner environment
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4 # Action to set up Java
+        with:
+          java-version: '17'
+          distribution: 'temurin' # Recommended distribution
+          cache: gradle # Caches Gradle dependencies for faster subsequent builds
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew # Ensures the Gradle wrapper is executable
+
+      - name: Build with Gradle
+        run: ./gradlew assembleDebug # Command to build the debug APK
+
+      - name: Run Unit Tests
+        run: ./gradlew test # Command to run unit tests
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4 # Action to upload the build artifact
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk # Path to the generated APK file
