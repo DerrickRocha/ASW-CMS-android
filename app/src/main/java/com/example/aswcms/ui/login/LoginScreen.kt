@@ -72,7 +72,9 @@ fun LoginScreenMainSection(state: LoginState, onSignInClicked: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (state.isLoading) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    modifier = Modifier.testTag("loading_indicator")
+                )
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
