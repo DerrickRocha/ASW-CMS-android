@@ -3,12 +3,11 @@ package com.example.aswcms
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.example.aswcms.repositories.LoginRepository
-import com.example.aswcms.ui.login.generateSecureRandomNonce
+import com.example.aswcms.utils.NonceGenerator.generateSecureRandomNonce
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 
 object CMSDependencies {
     private lateinit var application: AswCmsApplication
-
     fun init(applicationContext: AswCmsApplication){
         application = applicationContext
     }

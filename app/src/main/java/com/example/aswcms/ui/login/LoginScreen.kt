@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,7 +65,7 @@ fun LoginScreen(
 }
 
 @Composable
-fun LoginScreenMainSection(state: LoginState, onSignInClicked:()-> Unit) {
+fun LoginScreenMainSection(state: LoginState, onSignInClicked: () -> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             Modifier
@@ -99,21 +100,14 @@ fun LoginScreenMainSection(state: LoginState, onSignInClicked:()-> Unit) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Image(
-                modifier = Modifier.clickable(enabled = true, onClick = onSignInClicked),
+                modifier = Modifier
+                    .testTag("google_sign_in_button")
+                    .clickable(enabled = true, onClick = onSignInClicked),
                 painter = painterResource(R.drawable.android_light_sq_si),
                 contentDescription = "",
             )
         }
     }
-}
-
-private val secureRandom = SecureRandom()
-fun generateSecureRandomNonce(byteLength: Int = 32): String {
-    val randomBytes = ByteArray(byteLength)
-    secureRandom.nextBytes(randomBytes)
-    return Base64.getUrlEncoder()
-        .withoutPadding()
-        .encodeToString(randomBytes)
 }
 
 @Preview(name = "LoginScreen preview")
