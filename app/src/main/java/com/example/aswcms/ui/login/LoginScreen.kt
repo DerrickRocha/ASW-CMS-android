@@ -1,5 +1,6 @@
 package com.example.aswcms.ui.login
 
+import LoginState
 import LoginViewModel
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -59,6 +60,11 @@ fun LoginScreen(
         }
     }
 
+    LoginScreenMainSection(state, onSignInClicked)
+}
+
+@Composable
+fun LoginScreenMainSection(state: LoginState, onSignInClicked:()-> Unit) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             Modifier
