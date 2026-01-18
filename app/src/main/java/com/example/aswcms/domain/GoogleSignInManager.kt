@@ -1,4 +1,4 @@
-package com.example.aswcms.repositories
+package com.example.aswcms.domain
 
 import android.content.Context
 import android.os.Build

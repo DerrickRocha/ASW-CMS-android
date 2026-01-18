@@ -2,8 +2,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aswcms.CMSDependencies
-import com.example.aswcms.repositories.GoogleSignInManager
-import com.example.aswcms.repositories.SignInResult
+import com.example.aswcms.domain.GoogleSignInManager
+import com.example.aswcms.domain.SignInResult
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
