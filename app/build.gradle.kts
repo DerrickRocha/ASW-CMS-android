@@ -8,8 +8,9 @@ plugins {
 
 android {
     namespace = "com.example.aswcms"
-    // Standard for early 2026 development (Android 16 / "V")
-    compileSdk = 36
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
         applicationId = "com.example.aswcms"
@@ -75,8 +76,6 @@ dependencies {
     testImplementation(libs.junit)
 
     // Instrumented Testing (UI)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     // Debugging & Tooling
