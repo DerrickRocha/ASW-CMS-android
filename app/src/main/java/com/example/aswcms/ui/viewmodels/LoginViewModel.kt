@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val authRepository: GoogleSignInManager = CMSDependencies.googleManager
+    private val googleSignInManager: GoogleSignInManager = CMSDependencies.googleManager
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
@@ -23,10 +23,6 @@ class LoginViewModel(
     fun onLoginIntent(
         context: Context,
     ) {
-        _state.value = _state.value.copy(
-            isLoading = true,
-            error = null
-        )
         signIn(context)
     }
 
@@ -34,7 +30,11 @@ class LoginViewModel(
         context: Context,
     ) {
         viewModelScope.launch {
-            when (val result = authRepository.signIn(context)) {
+            _state.value = _state.value.copy(
+                isLoading = true,
+                error = null
+            )
+            when (val result = googleSignInManager.signIn(context)) {
                 SignInResult.Success -> {
                     _state.value = _state.value.copy(
                         isLoading = false,
