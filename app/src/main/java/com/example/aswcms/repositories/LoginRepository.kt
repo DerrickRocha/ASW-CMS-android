@@ -8,7 +8,8 @@ import androidx.credentials.exceptions.GetCredentialCancellationException
 import com.example.aswcms.extensions.isUserCancellation
 
 class LoginRepository(
-    private val request: GetCredentialRequest
+    private val request: GetCredentialRequest,
+    private val credentialManager: CredentialManager
 ) {
     suspend fun signIn(
         context: Context,
@@ -18,8 +19,6 @@ class LoginRepository(
                 UnsupportedOperationException("API 34+ required")
             )
         }
-
-        val credentialManager = CredentialManager.create(context)
 
         return try {
             credentialManager.getCredential(

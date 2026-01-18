@@ -45,7 +45,6 @@ fun LoginScreen(
         )
     }
 
-
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -101,6 +100,7 @@ fun LoginScreen(
         }
     }
 }
+
 private val secureRandom = SecureRandom()
 fun generateSecureRandomNonce(byteLength: Int = 32): String {
     val randomBytes = ByteArray(byteLength)

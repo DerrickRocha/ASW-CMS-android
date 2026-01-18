@@ -1,8 +1,7 @@
 import android.content.Context
-import androidx.credentials.GetCredentialRequest
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aswcms.loginRepository
+import com.example.aswcms.CMSDependencies
 import com.example.aswcms.repositories.LoginRepository
 import com.example.aswcms.repositories.SignInResult
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val authRepository: LoginRepository = loginRepository
+    private val authRepository: LoginRepository = CMSDependencies.loginRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())

@@ -4,4 +4,9 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 class AswCmsApplication: Application() {
+    override fun onCreate() {
+        super.onCreate()
+        CMSDependencies.init(this)
+    }
+
 }
