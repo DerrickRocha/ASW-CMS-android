@@ -7,7 +7,7 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import com.example.aswcms.extensions.isUserCancellation
 
-class LoginRepository(
+class GoogleSignInManager(
     private val request: GetCredentialRequest,
     private val credentialManager: CredentialManager
 ) {

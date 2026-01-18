@@ -32,8 +32,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.aswcms.R
 import com.example.aswcms.ui.theme.ASWCMSTheme
 import com.example.aswcms.ui.theme.Typography
-import java.security.SecureRandom
-import java.util.Base64
 
 @Composable
 fun LoginScreen(

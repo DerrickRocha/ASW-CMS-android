@@ -2,7 +2,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aswcms.CMSDependencies
-import com.example.aswcms.repositories.LoginRepository
+import com.example.aswcms.repositories.GoogleSignInManager
 import com.example.aswcms.repositories.SignInResult
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val authRepository: LoginRepository = CMSDependencies.loginRepository
+    private val authRepository: GoogleSignInManager = CMSDependencies.googleManager
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
@@ -23,6 +23,10 @@ class LoginViewModel(
     fun onLoginIntent(
         context: Context,
     ) {
+        _state.value = _state.value.copy(
+            isLoading = true,
+            error = null
+        )
         signIn(context)
     }
 
@@ -30,11 +34,6 @@ class LoginViewModel(
         context: Context,
     ) {
         viewModelScope.launch {
-            _state.value = _state.value.copy(
-                isLoading = true,
-                error = null
-            )
-
             when (val result = authRepository.signIn(context)) {
                 SignInResult.Success -> {
                     _state.value = _state.value.copy(

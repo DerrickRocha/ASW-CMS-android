@@ -2,7 +2,7 @@ package com.example.aswcms
 
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
-import com.example.aswcms.repositories.LoginRepository
+import com.example.aswcms.repositories.GoogleSignInManager
 import com.example.aswcms.utils.NonceGenerator.generateSecureRandomNonce
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 
@@ -12,7 +12,7 @@ object CMSDependencies {
         application = applicationContext
     }
 
-    val loginRepository: LoginRepository by lazy {
+    val googleManager: GoogleSignInManager by lazy {
         val option = GetSignInWithGoogleOption.Builder("webClientId")
             .setNonce(generateSecureRandomNonce())
             .build()
@@ -22,6 +22,6 @@ object CMSDependencies {
             .build()
         val credentialManager = CredentialManager.create(application)
 
-        LoginRepository(credentialRequest, credentialManager)
+        GoogleSignInManager(credentialRequest, credentialManager)
     }
 }
