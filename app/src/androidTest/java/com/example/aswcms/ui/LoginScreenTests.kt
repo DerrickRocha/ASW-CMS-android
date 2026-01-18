@@ -22,7 +22,7 @@ class LoginScreenTests {
         }
 
         composeRule
-            .onNodeWithTag("google_sign_in_button")
+            .onNodeWithTag("google_sign_in_b2utton")
             .assertExists()
     }
 }
