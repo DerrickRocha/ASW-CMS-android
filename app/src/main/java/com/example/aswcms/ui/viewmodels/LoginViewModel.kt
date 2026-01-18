@@ -23,14 +23,12 @@ class LoginViewModel(
 
     fun onLoginIntent(
         context: Context,
-        request: GetCredentialRequest
     ) {
-        signIn(context, request)
+        signIn(context)
     }
 
     private fun signIn(
         context: Context,
-        request: GetCredentialRequest
     ) {
         viewModelScope.launch {
             _state.value = _state.value.copy(
@@ -38,7 +36,7 @@ class LoginViewModel(
                 error = null
             )
 
-            when (val result = authRepository.signIn(context, request)) {
+            when (val result = authRepository.signIn(context)) {
                 SignInResult.Success -> {
                     _state.value = _state.value.copy(
                         isLoading = false,

@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ASWCMSTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen("dsfdsfdsafsdfsadf")
+                    LoginScreen()
                 }
             }
         }

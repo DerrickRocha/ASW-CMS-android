@@ -7,10 +7,11 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import com.example.aswcms.extensions.isUserCancellation
 
-class LoginRepository() {
+class LoginRepository(
+    private val request: GetCredentialRequest
+) {
     suspend fun signIn(
         context: Context,
-        request: GetCredentialRequest
     ): SignInResult {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             return SignInResult.Failure(

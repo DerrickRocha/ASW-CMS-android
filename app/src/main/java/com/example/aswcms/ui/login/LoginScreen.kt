@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,22 +26,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.credentials.GetCredentialRequest
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.aswcms.R
 import com.example.aswcms.ui.theme.ASWCMSTheme
 import com.example.aswcms.ui.theme.Typography
-import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import java.security.SecureRandom
 import java.util.Base64
 
 @Composable
 fun LoginScreen(
-    webClientId: String,
     viewModel: LoginViewModel = viewModel()
 ) {
-
     val context = LocalContext.current
+
+    val onSignInClicked = {
+        viewModel.onLoginIntent(
+            context,
+        )
+    }
+
+
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -55,16 +58,6 @@ fun LoginScreen(
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    val signInRequest = remember {
-        val option = GetSignInWithGoogleOption.Builder(webClientId)
-            .setNonce(generateSecureRandomNonce())
-            .build()
-
-        GetCredentialRequest.Builder()
-            .addCredentialOption(option)
-            .build()
     }
 
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -101,12 +94,7 @@ fun LoginScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Image(
-                modifier = Modifier.clickable(enabled = true, onClick = {
-                    viewModel.onLoginIntent(
-                        context,
-                        signInRequest
-                    )
-                }),
+                modifier = Modifier.clickable(enabled = true, onClick = onSignInClicked),
                 painter = painterResource(R.drawable.android_light_sq_si),
                 contentDescription = "",
             )
@@ -126,6 +114,6 @@ fun generateSecureRandomNonce(byteLength: Int = 32): String {
 @Composable
 fun ShowLoginScreen() {
     ASWCMSTheme {
-        LoginScreen("jhkjhkjhkjhkjh")
+        LoginScreen()
     }
 }
