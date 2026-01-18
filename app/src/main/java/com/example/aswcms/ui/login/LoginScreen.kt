@@ -103,7 +103,6 @@ fun LoginScreen(
             Image(
                 modifier = Modifier.clickable(enabled = true, onClick = {
                     viewModel.onLoginIntent(
-                        LoginIntent.SignInRequested,
                         context,
                         signInRequest
                     )
