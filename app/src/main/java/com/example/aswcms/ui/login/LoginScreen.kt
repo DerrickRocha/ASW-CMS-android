@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
+    modifier: Modifier = Modifier,
     viewModel: LoginViewModel = viewModel()
 ) {
     val context = LocalContext.current
@@ -67,12 +68,12 @@ fun LoginScreen(
         }
     }
 
-    LoginScreenMainSection(state, onSignInClicked)
+    LoginScreenMainSection(modifier, state, onSignInClicked)
 }
 
 @Composable
-fun LoginScreenMainSection(state: LoginState, onSignInClicked: () -> Unit) {
-    Surface(modifier = Modifier.fillMaxSize()) {
+fun LoginScreenMainSection(modifier: Modifier, state: LoginState, onSignInClicked: () -> Unit) {
+    Surface(modifier = modifier.fillMaxSize()) {
         Column(
             Modifier
                 .fillMaxSize()
