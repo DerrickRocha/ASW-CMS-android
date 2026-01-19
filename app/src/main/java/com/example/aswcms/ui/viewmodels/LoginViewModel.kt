@@ -1,9 +1,8 @@
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aswcms.CMSDependencies
-import com.example.aswcms.domain.GoogleSignInManager
-import com.example.aswcms.domain.SignInResult
+import com.example.aswcms.domain.repositories.AuthenticationRepository
+import com.example.aswcms.domain.repositories.AuthenticationResult
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -11,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val googleSignInManager: GoogleSignInManager = CMSDependencies.googleManager
+    private val loginRepository: AuthenticationRepository = CMSDependencies.authenticationRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
@@ -21,21 +20,21 @@ class LoginViewModel(
     val effects: SharedFlow<LoginEffect> = _effects
 
     fun onLoginIntent(
-        context: Context,
+        token: String,
     ) {
-        signIn(context)
+        signIn(token)
     }
 
     private fun signIn(
-        context: Context,
+        token: String,
     ) {
         viewModelScope.launch {
             _state.value = _state.value.copy(
                 isLoading = true,
                 error = null
             )
-            when (val result = googleSignInManager.signIn(context)) {
-                SignInResult.Success -> {
+            when (val result = loginRepository.login(token)) {
+                is AuthenticationResult.LoginSuccess -> {
                     _state.value = _state.value.copy(
                         isLoading = false,
                         signedIn = true
@@ -43,14 +42,10 @@ class LoginViewModel(
                     _effects.emit(LoginEffect.ShowSignInSuccess)
                 }
 
-                SignInResult.CancelledByUser -> {
-                    _state.value = _state.value.copy(isLoading = false)
-                }
-
-                is SignInResult.Failure -> {
+                is AuthenticationResult.LoginFailure -> {
                     _state.value = _state.value.copy(
                         isLoading = false,
-                        error = result.cause.message
+                        error = result.message
                     )
                     _effects.emit(
                         LoginEffect.ShowError("Sign in failed")

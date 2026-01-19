@@ -5,7 +5,7 @@ import com.example.aswcms.domain.models.User
 
 class AuthenticationRepository {
 
-    fun login(): AuthenticationResult {
+    fun login(token: String): AuthenticationResult {
         return AuthenticationResult.LoginSuccess(
             LoginSuccessData(
                 User("Derrick", "Rocha"),
@@ -18,4 +18,6 @@ class AuthenticationRepository {
 
 sealed interface AuthenticationResult{
     data class LoginSuccess(val data: LoginSuccessData): AuthenticationResult
+
+    data class LoginFailure(val message: String): AuthenticationResult
 }

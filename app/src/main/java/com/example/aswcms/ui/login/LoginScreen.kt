@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,20 +30,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.aswcms.CMSDependencies
 import com.example.aswcms.R
+import com.example.aswcms.domain.SignInResult
 import com.example.aswcms.ui.theme.ASWCMSTheme
 import com.example.aswcms.ui.theme.Typography
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = viewModel()
 ) {
     val context = LocalContext.current
-
+    val scope = rememberCoroutineScope()
     val onSignInClicked = {
-        viewModel.onLoginIntent(
-            context,
-        )
+        scope.launch {
+            val result = CMSDependencies.googleManager.signIn(context)
+            when(result) {
+                SignInResult.CancelledByUser -> TODO()
+                is SignInResult.Failure -> TODO()
+                is SignInResult.Success -> viewModel.onLoginIntent(result)
+            }
+        }
     }
 
     val state by viewModel.state.collectAsState()
