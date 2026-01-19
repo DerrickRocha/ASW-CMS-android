@@ -25,9 +25,11 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                 ) { innerPadding ->
-                    LoginScreen(Modifier
-                        .consumeWindowInsets(innerPadding)
-                        .padding(innerPadding))
+                    LoginScreen(
+                        Modifier
+                            .consumeWindowInsets(innerPadding)
+                            .padding(innerPadding)
+                    )
                 }
             }
         }
