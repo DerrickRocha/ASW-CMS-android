@@ -56,11 +56,6 @@ class LoginViewModel(
     }
 }
 
-
-sealed interface LoginIntent {
-    data object SignInRequested : LoginIntent
-}
-
 data class LoginState(
     val isLoading: Boolean = false,
     val signedIn: Boolean = false,

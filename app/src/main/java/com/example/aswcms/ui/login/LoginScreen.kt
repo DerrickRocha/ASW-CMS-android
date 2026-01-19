@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,7 +74,7 @@ fun LoginScreen(
 
 @Composable
 fun LoginScreenMainSection(modifier: Modifier, state: LoginState, onSignInClicked: () -> Unit) {
-    Surface(modifier = modifier.fillMaxSize()) {
+    Surface(modifier) {
         Column(
             Modifier
                 .fillMaxSize()
