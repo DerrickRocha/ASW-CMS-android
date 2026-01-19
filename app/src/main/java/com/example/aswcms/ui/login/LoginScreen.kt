@@ -43,13 +43,12 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val onSignInClicked = {
+    val onSignInClicked: ()-> Unit = {
         scope.launch {
-            val result = CMSDependencies.googleManager.signIn(context)
-            when(result) {
-                SignInResult.CancelledByUser -> TODO()
-                is SignInResult.Failure -> TODO()
-                is SignInResult.Success -> viewModel.onLoginIntent(result)
+            when(val result = CMSDependencies.googleManager.signIn(context)) {
+                SignInResult.CancelledByUser -> {}
+                is SignInResult.Failure -> Toast.makeText(context, result.cause.message, Toast.LENGTH_SHORT).show()
+                is SignInResult.Success -> viewModel.onLoginIntent(result.token)
             }
         }
     }
