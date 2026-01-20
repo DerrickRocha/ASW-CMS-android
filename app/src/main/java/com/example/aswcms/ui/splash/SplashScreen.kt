@@ -9,23 +9,34 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.aswcms.R
 import com.example.aswcms.ui.theme.ASWCMSTheme
 import com.example.aswcms.ui.theme.Typography
+import com.example.aswcms.ui.viewmodels.SplashEffect
+import com.example.aswcms.ui.viewmodels.SplashViewModel
 
 @Composable
-fun SplashScreen() {
+fun SplashScreen(viewModel: SplashViewModel = viewModel(), onShowNextScreen: () -> Unit = {}) {
+    LaunchedEffect(Unit) {
+        viewModel.effects.collect { effect ->
+            when(effect) {
+                SplashEffect.ShowNextScreen -> onShowNextScreen()
+            }
+        }
+    }
     SplashContent()
 }
 
 @Composable
 fun SplashContent() {
-    Surface(modifier = Modifier.fillMaxSize()){
+    Surface(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Row(
                 modifier = Modifier,
@@ -50,7 +61,7 @@ fun SplashContent() {
 @Preview(name = "Splash Screen")
 @Composable
 fun showSplash() {
-    ASWCMSTheme{
+    ASWCMSTheme {
         SplashScreen()
     }
 }

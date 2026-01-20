@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -14,6 +12,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.example.aswcms.ui.home.HomeScreen
 import com.example.aswcms.ui.login.LoginScreen
+import com.example.aswcms.ui.splash.SplashScreen
 import com.example.aswcms.ui.theme.ASWCMSTheme
 import kotlinx.serialization.Serializable
 
@@ -24,9 +23,15 @@ data object Login : NavKey
 data object Home : NavKey
 
 @Composable
-fun CMSApplication() {
+fun CMSApp() {
 
+    val onShowNextScreen = {
+
+    }
     ASWCMSTheme {
+        SplashScreen(onShowNextScreen = onShowNextScreen)
+
+
         Scaffold(
             modifier = Modifier.fillMaxSize(),
         ) { innerPadding ->
