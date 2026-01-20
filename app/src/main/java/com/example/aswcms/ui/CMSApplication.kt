@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.example.aswcms.ui.home.HomeScreen
 import com.example.aswcms.ui.login.LoginScreen
@@ -25,11 +26,12 @@ data object Home : NavKey
 @Composable
 fun CMSApplication() {
 
-    val backstack = remember { mutableStateListOf<Any>(Login) }
     ASWCMSTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
         ) { innerPadding ->
+            val backstack = rememberNavBackStack (Login)
+
             NavDisplay(
                 modifier = Modifier
                     .consumeWindowInsets(innerPadding)
