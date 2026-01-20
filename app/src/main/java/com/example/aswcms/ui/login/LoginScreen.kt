@@ -73,7 +73,7 @@ fun LoginScreen(
 }
 
 @Composable
-fun LoginScreenMainSection(modifier: Modifier, state: LoginState, onSignInClicked: () -> Unit) {
+fun LoginScreenMainSection(modifier: Modifier = Modifier, state: LoginState, onSignInClicked: () -> Unit) {
     Surface(modifier) {
         Column(
             Modifier
