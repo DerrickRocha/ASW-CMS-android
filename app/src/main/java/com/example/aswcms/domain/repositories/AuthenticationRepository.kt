@@ -2,16 +2,21 @@ package com.example.aswcms.domain.repositories
 
 import com.example.aswcms.domain.models.LoginSuccessData
 import com.example.aswcms.domain.models.User
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class AuthenticationRepository {
+class AuthenticationRepository(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
 
-    fun login(token: String): AuthenticationResult {
-        return AuthenticationResult.LoginSuccess(
-            LoginSuccessData(
-                User("Derrick", "Rocha"),
-                "fjkdafsjdskfjlkdsjfklsdj="
+    suspend fun login(token: String): AuthenticationResult {
+        return withContext(dispatcher) {
+            AuthenticationResult.LoginSuccess(
+                LoginSuccessData(
+                    User("Derrick", "Rocha"),
+                    "fjkdafsjdskfjlkdsjfklsdj="
+                )
             )
-        )
+        }
     }
 }
 
