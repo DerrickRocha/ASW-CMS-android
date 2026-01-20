@@ -41,7 +41,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = viewModel()
+    viewModel: LoginViewModel = viewModel(),
+    onLoginComplete: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -60,8 +61,10 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                LoginEffect.ShowSignInSuccess ->
+                LoginEffect.ShowSignInSuccess -> {
                     Toast.makeText(context, "Sign in successful!", Toast.LENGTH_SHORT).show()
+                    onLoginComplete()
+                }
 
                 is LoginEffect.ShowError ->
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()

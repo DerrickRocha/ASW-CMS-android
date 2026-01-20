@@ -12,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.aswcms.ui.CMSApplication
 import com.example.aswcms.ui.login.LoginScreen
 import com.example.aswcms.ui.theme.ASWCMSTheme
 
@@ -21,17 +22,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ASWCMSTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                ) { innerPadding ->
-                    LoginScreen(
-                        Modifier
-                            .consumeWindowInsets(innerPadding)
-                            .padding(innerPadding)
-                    )
-                }
-            }
+            CMSApplication()
         }
     }
 }
