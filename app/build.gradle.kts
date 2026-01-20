@@ -1,9 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp) // Apply it here
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt)
 }
 
 android {
@@ -61,11 +60,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
-    // Dagger Hilt (Dependency Injection)
-    implementation(libs.hilt.android)
     implementation(libs.androidx.ui.test.junit4)
-    ksp(libs.hilt.compiler) // Using KSP for faster builds
-    implementation(libs.androidx.hilt.navigation.compose)
 
     // Credentials & Google Identity
     implementation(libs.androidx.credentials)
