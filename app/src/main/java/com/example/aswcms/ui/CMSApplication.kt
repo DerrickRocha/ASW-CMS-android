@@ -17,19 +17,19 @@ import com.example.aswcms.ui.theme.ASWCMSTheme
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object Login: NavKey
+data object Login : NavKey
+
 @Serializable
-data object Home: NavKey
+data object Home : NavKey
 
 @Composable
 fun CMSApplication() {
 
     val backstack = remember { mutableStateListOf<Any>(Login) }
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-    ) { innerPadding ->
-        ASWCMSTheme {
+    ASWCMSTheme {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+        ) { innerPadding ->
             NavDisplay(
                 modifier = Modifier
                     .consumeWindowInsets(innerPadding)
@@ -49,7 +49,5 @@ fun CMSApplication() {
                 },
             )
         }
-
     }
-
 }
