@@ -41,7 +41,6 @@ fun CMSApplication() {
                 entryProvider = entryProvider {
                     entry<Login> {
                         LoginScreen(
-                            Modifier,
                             onLoginComplete = {
                                 backstack.removeLastOrNull()
                                 backstack.add(Home)

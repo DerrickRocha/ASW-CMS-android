@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +39,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier,
     viewModel: LoginViewModel = viewModel(),
     onLoginComplete: () -> Unit = {},
 ) {
@@ -72,12 +70,12 @@ fun LoginScreen(
         }
     }
 
-    LoginScreenMainSection(modifier, state, onSignInClicked)
+    LoginScreenMainSection( state = state, onSignInClicked = onSignInClicked)
 }
 
 @Composable
-fun LoginScreenMainSection(modifier: Modifier = Modifier, state: LoginState, onSignInClicked: () -> Unit) {
-    Surface(modifier) {
+fun LoginScreenMainSection(state: LoginState, onSignInClicked: () -> Unit) {
+    Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             Modifier
                 .fillMaxSize()
