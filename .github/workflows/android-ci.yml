@@ -30,6 +30,15 @@ jobs:
       - name: Run Unit Tests
         run: ./gradlew test # Command to run unit tests
 
+      - name: Run Android Tests (Instrumentation)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          script: ./gradlew connectedCheck
+
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4 # Action to upload the build artifact
         with:
