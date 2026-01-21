@@ -83,9 +83,10 @@ fun LoginScreen(
 
 @Composable
 fun LoginScreenMainSection(state: LoginState, onSignInClicked: () -> Unit) {
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .windowInsetsPadding(WindowInsets.safeDrawing)) {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
         Column(
             Modifier
                 .fillMaxSize()

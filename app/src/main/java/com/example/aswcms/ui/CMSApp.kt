@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,29 +35,21 @@ fun CMSApp(viewModel: CMSAppViewModel = viewModel()) {
     val state by viewModel.cmsAppState.collectAsState()
 
     ASWCMSTheme {
-        when(state) {
-            CMSAppState.Splash -> {
-                SplashScreen {
-                    viewModel.onIntent(CMSAppIntent.IsLoggedInRequested)
+        Surface(modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+            when(state) {
+                CMSAppState.Splash -> {
+                    SplashScreen {
+                        viewModel.onIntent(CMSAppIntent.IsLoggedInRequested)
+                    }
+                }
+                CMSAppState.Login -> LoginScreen {
+                    viewModel.onIntent(CMSAppIntent.HomeScreenRequested)
+                }
+                CMSAppState.Home -> {
+                    HomeScreen()
                 }
             }
-            CMSAppState.Login -> LoginScreen {
-                viewModel.onIntent(CMSAppIntent.HomeScreenRequested)
-            }
-            CMSAppState.Home -> {
-                val backstack = rememberNavBackStack (Home)
-
-                NavDisplay(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .consumeWindowInsets(WindowInsets.safeDrawing),
-                    backStack = backstack,
-                    onBack = { backstack.removeLastOrNull() },
-                    entryProvider = entryProvider {
-                        entry<Home> { HomeScreen() }
-                    },
-                )
-            }
         }
+
     }
 }
