@@ -8,11 +8,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,11 +47,16 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val onSignInClicked: ()-> Unit = {
+    val onSignInClicked: () -> Unit = {
         scope.launch {
-            when(val result = CMSDependencies.googleManager.signIn(context)) {
+            when (val result = CMSDependencies.googleManager.signIn(context)) {
                 SignInResult.CancelledByUser -> {}
-                is SignInResult.Failure -> Toast.makeText(context, result.cause.message, Toast.LENGTH_SHORT).show()
+                is SignInResult.Failure -> Toast.makeText(
+                    context,
+                    result.cause.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+
                 is SignInResult.Success -> viewModel.onLoginIntent(result.token)
             }
         }
@@ -70,12 +78,14 @@ fun LoginScreen(
         }
     }
 
-    LoginScreenMainSection( state = state, onSignInClicked = onSignInClicked)
+    LoginScreenMainSection(state = state, onSignInClicked = onSignInClicked)
 }
 
 @Composable
 fun LoginScreenMainSection(state: LoginState, onSignInClicked: () -> Unit) {
-    Surface(modifier = Modifier.fillMaxSize()) {
+    Surface(modifier = Modifier
+        .fillMaxSize()
+        .windowInsetsPadding(WindowInsets.safeDrawing)) {
         Column(
             Modifier
                 .fillMaxSize()
