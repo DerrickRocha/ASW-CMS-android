@@ -16,7 +16,7 @@ class SplashViewModel(): ViewModel() {
         startTimer()
     }
 
-    fun startTimer() {
+    private fun startTimer() {
         viewModelScope.launch {
             delay(3_000)
             _effects.emit(SplashEffect.ShowNextScreen)
