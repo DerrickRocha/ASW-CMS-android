@@ -5,6 +5,7 @@ import androidx.credentials.GetCredentialRequest
 import com.example.aswcms.domain.GoogleSignInManager
 import com.example.aswcms.domain.repositories.ASWDataStoreRepository
 import com.example.aswcms.domain.repositories.AuthenticationRepository
+import com.example.aswcms.domain.repositories.StoresRepository
 import com.example.aswcms.utils.NonceGenerator.generateSecureRandomNonce
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 
@@ -33,5 +34,9 @@ object CMSDependencies {
 
     val aswDataRepository: ASWDataStoreRepository by lazy {
         ASWDataStoreRepository()
+    }
+
+    val storesRepository: StoresRepository by lazy {
+        StoresRepository()
     }
 }
