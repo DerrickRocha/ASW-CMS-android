@@ -26,7 +26,7 @@ import com.example.aswcms.ui.viewmodels.StoresScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StoresScreen(viewModel: StoresScreenViewModel = viewModel()) {
+fun StoresScreen(viewModel: StoresScreenViewModel = viewModel(), onStoreSelected: (Int) -> Unit) {
     val state by viewModel.state.collectAsState()
     val onRetry = {
 
@@ -81,7 +81,7 @@ fun ErrorScreen(errorMessage: String, onRetryClicked: () -> Unit){
 @Composable
 fun PreviewStoresScreen() {
     ASWCMSTheme{
-        StoresScreen()
+        StoresScreen{}
     }
 
 }

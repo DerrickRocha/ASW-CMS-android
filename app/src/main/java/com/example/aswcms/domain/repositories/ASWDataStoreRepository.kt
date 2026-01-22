@@ -11,4 +11,14 @@ class ASWDataStoreRepository(private val dispatcher: CoroutineDispatcher = Dispa
             false
         }
     }
+
+    suspend fun currentStoreId(): Int {
+        return withContext(dispatcher) {
+            1
+        }
+    }
+
+    suspend fun saveCurrentStoreId(storeId: Int) {
+
+    }
 }

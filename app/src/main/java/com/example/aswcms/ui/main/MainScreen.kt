@@ -11,17 +11,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.ui.NavDisplay
 import com.example.aswcms.ui.store.StoresScreen
+import com.example.aswcms.ui.viewmodels.MainScreenIntent
 import com.example.aswcms.ui.viewmodels.MainScreenState
 import com.example.aswcms.ui.viewmodels.MainScreenViewModel
-import kotlinx.serialization.Serializable
 
-@Serializable
-data object Overview : NavKey
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
     Scaffold(
@@ -31,16 +25,20 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         topBar = {},
         floatingActionButton = {},
     ) {
+        val onStoreSelected: (Int) -> Unit = { storeId ->
+            viewModel.onIntent(MainScreenIntent.RequestStoreOverView(storeId))
+        }
         val state by viewModel.state.collectAsState()
-        MainScreenContent(state)
+
+        MainScreenContent(state, onStoreSelected)
     }
 }
 
 @Composable
-fun MainScreenContent(state: MainScreenState) {
+fun MainScreenContent(state: MainScreenState, onStoreSelected: (Int) -> Unit) {
     when(state) {
         MainScreenState.Stores -> {
-            StoresScreen()
+            StoresScreen(onStoreSelected = onStoreSelected)
         }
         is MainScreenState.Overview -> {
 
