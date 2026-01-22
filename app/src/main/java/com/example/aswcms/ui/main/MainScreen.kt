@@ -11,7 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.aswcms.ui.store.StoresScreen
+import com.example.aswcms.ui.overview.StoreOverviewScreen
+import com.example.aswcms.ui.stores.StoresScreen
 import com.example.aswcms.ui.viewmodels.MainScreenIntent
 import com.example.aswcms.ui.viewmodels.MainScreenState
 import com.example.aswcms.ui.viewmodels.MainScreenViewModel
@@ -41,7 +42,7 @@ fun MainScreenContent(state: MainScreenState, onStoreSelected: (Int) -> Unit) {
             StoresScreen(onStoreClicked = onStoreSelected)
         }
         is MainScreenState.Overview -> {
-
+            StoreOverviewScreen()
         }
 
     }
