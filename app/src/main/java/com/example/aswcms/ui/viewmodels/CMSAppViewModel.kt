@@ -17,14 +17,14 @@ class CMSAppViewModel(private val repository: ASWDataStoreRepository = CMSDepend
     fun onIntent(intent: CMSAppIntent) {
         when (intent) {
             CMSAppIntent.IsLoggedInRequested -> isUserLoggedIn()
-            CMSAppIntent.HomeScreenRequested -> _cmsAppState.value = CMSAppState.Home
+            CMSAppIntent.HomeScreenRequested -> _cmsAppState.value = CMSAppState.Main
         }
     }
 
     private fun isUserLoggedIn() {
         viewModelScope.launch {
             _cmsAppState.value =
-                if (repository.isLoggedIn()) CMSAppState.Home else CMSAppState.Login
+                if (repository.isLoggedIn()) CMSAppState.Main else CMSAppState.Login
         }
     }
 }
@@ -32,7 +32,7 @@ class CMSAppViewModel(private val repository: ASWDataStoreRepository = CMSDepend
 sealed interface CMSAppState {
     object Splash : CMSAppState
     object Login : CMSAppState
-    object Home : CMSAppState
+    object Main : CMSAppState
 }
 
 

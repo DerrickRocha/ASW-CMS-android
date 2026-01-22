@@ -40,7 +40,7 @@ fun SplashScreen(viewModel: SplashViewModel = viewModel(), onShowNextScreen: () 
 
 @Composable
 fun SplashContent() {
-    Surface(modifier = Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+    Surface(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Row(
                 modifier = Modifier,

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ASW CMS</string>
+    <string name="retry">Retry</string>
 </resources>
