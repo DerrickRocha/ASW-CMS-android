@@ -4,28 +4,28 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class HomeScreenViewModel(): ViewModel() {
-    private val _state = MutableStateFlow<HomeScreenState>(HomeScreenState.Stores)
-    val state: StateFlow<HomeScreenState> = _state
+class MainScreenViewModel(): ViewModel() {
+    private val _state = MutableStateFlow<MainScreenState>(MainScreenState.Stores)
+    val state: StateFlow<MainScreenState> = _state
 
     init{
         //todo: Load state from data store repository.
     }
 
-    fun onIntent(intent: HomeScreenIntent) {
+    fun onIntent(intent: MainScreenIntent) {
         when(intent) {
-            is HomeScreenIntent.RequestStoreOverView -> _state.value = HomeScreenState.Overview(intent.storeId)
-            HomeScreenIntent.RequestStores -> _state.value = HomeScreenState.Stores
+            is MainScreenIntent.RequestStoreOverView -> _state.value = MainScreenState.Overview(intent.storeId)
+            MainScreenIntent.RequestStores -> _state.value = MainScreenState.Stores
         }
     }
 }
 
-sealed interface HomeScreenState {
-    object Stores: HomeScreenState
-    data class Overview(val storeId: Int): HomeScreenState
+sealed interface MainScreenState {
+    object Stores: MainScreenState
+    data class Overview(val storeId: Int): MainScreenState
 }
 
-sealed interface HomeScreenIntent {
-    object RequestStores: HomeScreenIntent
-    data class RequestStoreOverView(val storeId: Int): HomeScreenIntent
+sealed interface MainScreenIntent {
+    object RequestStores: MainScreenIntent
+    data class RequestStoreOverView(val storeId: Int): MainScreenIntent
 }

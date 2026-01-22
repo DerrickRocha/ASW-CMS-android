@@ -1,4 +1,4 @@
-package com.example.aswcms.ui.home
+package com.example.aswcms.ui.main
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -11,16 +11,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.example.aswcms.ui.Home
 import com.example.aswcms.ui.store.StoresScreen
-import com.example.aswcms.ui.viewmodels.HomeScreenState
-import com.example.aswcms.ui.viewmodels.HomeScreenViewModel
+import com.example.aswcms.ui.viewmodels.MainScreenState
+import com.example.aswcms.ui.viewmodels.MainScreenViewModel
+import kotlinx.serialization.Serializable
 
+@Serializable
+data object Overview : NavKey
 @Composable
-fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
+fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
     Scaffold(
         Modifier
             .fillMaxSize()
@@ -29,35 +32,25 @@ fun HomeScreen(viewModel: HomeScreenViewModel = viewModel()) {
         floatingActionButton = {},
     ) {
         val state by viewModel.state.collectAsState()
-        HomeScreenContent(state)
+        MainScreenContent(state)
     }
 }
 
 @Composable
-fun HomeScreenContent(state: HomeScreenState) {
+fun MainScreenContent(state: MainScreenState) {
     when(state) {
-        is HomeScreenState.Overview -> {
-            val backstack = rememberNavBackStack (Home)
-
-            NavDisplay(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .consumeWindowInsets(WindowInsets.safeDrawing),
-                backStack = backstack,
-                onBack = { backstack.removeLastOrNull() },
-                entryProvider = entryProvider {
-                    entry<Home> { HomeScreen() }
-                },
-            )
-        }
-        HomeScreenState.Stores -> {
+        MainScreenState.Stores -> {
             StoresScreen()
         }
+        is MainScreenState.Overview -> {
+
+        }
+
     }
 }
 
 @Preview("Home Screen")
 @Composable
-fun HomeScreenPreview() {
-    HomeScreen()
+fun MainScreenPreview() {
+    MainScreen()
 }

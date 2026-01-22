@@ -39,7 +39,7 @@ fun StoresScreenContent(state: StoresScreenState, onRetry:() -> Unit) {
     Box(Modifier.fillMaxSize()) {
         StoresList(state.stores)
         if(state.isLoading) {
-            LoadingScreen()
+            LoadingSection()
         }
         if(state.errorMessage != null) {
             ErrorScreen(state.errorMessage, onRetry)
@@ -57,7 +57,7 @@ fun StoresList(stores: List<Store>) {
 }
 
 @Composable
-fun LoadingScreen() {
+fun LoadingSection() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }
@@ -81,7 +81,7 @@ fun ErrorScreen(errorMessage: String, onRetryClicked: () -> Unit){
 @Composable
 fun PreviewStoresScreen() {
     ASWCMSTheme{
-        StoresScreenContent(StoresScreenState(errorMessage = "Holy Moly"), {})
+        StoresScreen()
     }
 
 }
