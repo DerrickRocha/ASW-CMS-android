@@ -14,7 +14,7 @@ class ASWDataStoreRepository(private val dispatcher: CoroutineDispatcher = Dispa
 
     suspend fun currentStoreId(): Int {
         return withContext(dispatcher) {
-            1
+            -1
         }
     }
 
