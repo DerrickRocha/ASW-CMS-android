@@ -21,8 +21,7 @@ import com.example.aswcms.ui.viewmodels.MainScreenViewModel
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
     Scaffold(
         Modifier
-            .fillMaxSize()
-            .consumeWindowInsets(WindowInsets.safeDrawing),
+            .fillMaxSize(),
         topBar = {},
         floatingActionButton = {},
     ) {

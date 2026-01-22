@@ -1,7 +1,10 @@
 package com.example.aswcms.ui.overview
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ListItem
@@ -11,20 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.aswcms.ui.theme.ASWCMSTheme
 
-@Composable
-fun StoreOverviewScreen() {
-
-    StoreOverviewContent(
-        OverviewState(
-            listOf(
-                OverViewItem(OverviewItemId.ORDERS, "Orders"),
-                OverViewItem(OverviewItemId.PRODUCTS, "Products"),
-                OverViewItem(OverviewItemId.CUSTOMERS, "Customers"),
-                OverViewItem(OverviewItemId.INVENTORY, "Inventory")
-            )
-        )
-    )
-}
 
 data class OverviewState(val items: List<OverViewItem>)
 data class OverViewItem(val id: OverviewItemId, val title: String)
@@ -35,13 +24,28 @@ enum class OverviewItemId {
     CUSTOMERS,
     INVENTORY
 }
-
 @Composable
-fun StoreOverviewContent(state: OverviewState) {
+fun StoreOverviewScreen() {
     val onItemClicked: (OverviewItemId) -> Unit = {
 
     }
-    LazyColumn(Modifier.fillMaxSize()) {
+
+    StoreOverviewContent(
+        OverviewState(
+            listOf(
+                OverViewItem(OverviewItemId.ORDERS, "Orders"),
+                OverViewItem(OverviewItemId.PRODUCTS, "Products"),
+                OverViewItem(OverviewItemId.CUSTOMERS, "Customers"),
+                OverViewItem(OverviewItemId.INVENTORY, "Inventory")
+            )
+        ),
+        onItemClicked
+    )
+}
+
+@Composable
+fun StoreOverviewContent(state: OverviewState, onItemClicked: (OverviewItemId) -> Unit) {
+    LazyColumn(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
         items(state.items) { item ->
             OverviewListItem(item, onItemClicked)
         }
