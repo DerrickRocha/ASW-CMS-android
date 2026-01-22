@@ -2,12 +2,13 @@ package com.example.aswcms.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.aswcms.CMSDependencies
 import com.example.aswcms.domain.repositories.ASWDataStoreRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class MainScreenViewModel(private val repository: ASWDataStoreRepository): ViewModel() {
+class MainScreenViewModel(private val repository: ASWDataStoreRepository = CMSDependencies.aswDataRepository): ViewModel() {
     private val _state = MutableStateFlow<MainScreenState>(MainScreenState.Stores)
     val state: StateFlow<MainScreenState> = _state
 

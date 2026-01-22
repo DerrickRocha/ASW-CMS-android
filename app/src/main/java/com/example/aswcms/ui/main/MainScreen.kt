@@ -38,7 +38,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
 fun MainScreenContent(state: MainScreenState, onStoreSelected: (Int) -> Unit) {
     when(state) {
         MainScreenState.Stores -> {
-            StoresScreen(onStoreSelected = onStoreSelected)
+            StoresScreen(onStoreClicked = onStoreSelected)
         }
         is MainScreenState.Overview -> {
 
