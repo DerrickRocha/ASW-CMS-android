@@ -3,12 +3,12 @@ package com.example.aswcms.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aswcms.CMSDependencies
-import com.example.aswcms.domain.repositories.ASWDataStoreRepository
+import com.example.aswcms.domain.repositories.AuthenticationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class CMSAppViewModel(private val repository: ASWDataStoreRepository = CMSDependencies.aswDataRepository) :
+class CMSAppViewModel(private val repository: AuthenticationRepository = CMSDependencies.authenticationRepository) :
     ViewModel() {
 
     private val _cmsAppState = MutableStateFlow<CMSAppState>(CMSAppState.Splash)
@@ -23,8 +23,9 @@ class CMSAppViewModel(private val repository: ASWDataStoreRepository = CMSDepend
 
     private fun isUserLoggedIn() {
         viewModelScope.launch {
-            _cmsAppState.value =
-                if (repository.isLoggedIn()) CMSAppState.Main else CMSAppState.Login
+            repository.isLoggedIn.collect { isLoggedIn ->
+                _cmsAppState.value = if (isLoggedIn) CMSAppState.Main else CMSAppState.Login
+            }
         }
     }
 }
@@ -38,5 +39,5 @@ sealed interface CMSAppState {
 
 sealed interface CMSAppIntent {
     object IsLoggedInRequested : CMSAppIntent
-    object HomeScreenRequested: CMSAppIntent
+    object HomeScreenRequested : CMSAppIntent
 }

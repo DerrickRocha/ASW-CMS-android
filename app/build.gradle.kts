@@ -74,6 +74,8 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
 
+    // Datastore
+    implementation("androidx.datastore:datastore-preferences:1.2.0")
     // Unit Testing
     testImplementation(libs.junit)
 

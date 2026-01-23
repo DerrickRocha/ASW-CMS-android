@@ -24,6 +24,7 @@ composeBom = "2026.01.00"
 # Testing
 junit = "4.13.2"
 uiTestJunit4 = "1.10.1"
+datastoreCore = "1.2.0"
 
 [libraries]
 # AndroidX Core & Lifecycle
@@ -58,6 +59,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "uiTestJunit4" }
+androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastoreCore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

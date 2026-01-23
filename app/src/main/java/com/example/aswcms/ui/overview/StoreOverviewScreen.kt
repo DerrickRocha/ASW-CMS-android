@@ -12,11 +12,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import com.example.aswcms.ui.theme.ASWCMSTheme
+import kotlinx.serialization.Serializable
 
 
-data class OverviewState(val items: List<OverViewItem>)
-data class OverViewItem(val id: OverviewItemId, val title: String)
+data class OverviewState(val items: List<OverviewItem>)
+data class OverviewItem(val id: OverviewItemId, val title: String)
 
 enum class OverviewItemId {
     ORDERS,
@@ -24,28 +29,75 @@ enum class OverviewItemId {
     CUSTOMERS,
     INVENTORY
 }
+
+@Serializable
+data object OverviewKey : NavKey
+
+@Serializable
+data object Orders: NavKey
+
+@Serializable
+data object Products: NavKey
+
+@Serializable
+data object Customers: NavKey
+
+@Serializable
+data object Inventory: NavKey
+
 @Composable
 fun StoreOverviewScreen() {
-    val onItemClicked: (OverviewItemId) -> Unit = {
+    val backstack = rememberNavBackStack(OverviewKey)
 
+    val onItemClicked: (OverviewItemId) -> Unit = { id ->
+        when(id) {
+            OverviewItemId.ORDERS -> backstack.add(Orders)
+            OverviewItemId.PRODUCTS -> backstack.add(Products)
+            OverviewItemId.CUSTOMERS -> backstack.add(Customers)
+            OverviewItemId.INVENTORY -> backstack.add(Inventory)
+        }
     }
-
-    StoreOverviewContent(
-        OverviewState(
-            listOf(
-                OverViewItem(OverviewItemId.ORDERS, "Orders"),
-                OverViewItem(OverviewItemId.PRODUCTS, "Products"),
-                OverViewItem(OverviewItemId.CUSTOMERS, "Customers"),
-                OverViewItem(OverviewItemId.INVENTORY, "Inventory")
-            )
-        ),
-        onItemClicked
+    NavDisplay(
+        backStack = backstack,
+        modifier = Modifier,
+        onBack = { backstack.removeLastOrNull() },
+        entryProvider = entryProvider {
+            entry<OverviewKey> {
+                StoreOverviewContent(
+                    OverviewState(
+                        listOf(
+                            OverviewItem(OverviewItemId.ORDERS, "Orders"),
+                            OverviewItem(OverviewItemId.PRODUCTS, "Products"),
+                            OverviewItem(OverviewItemId.CUSTOMERS, "Customers"),
+                            OverviewItem(OverviewItemId.INVENTORY, "Inventory")
+                        )
+                    ),
+                    onItemClicked
+                )
+            }
+            entry<Orders> {
+                Text("Fee")
+            }
+            entry<Products> {
+                Text("fie")
+            }
+            entry<Customers> {
+                Text("foe")
+            }
+            entry<Inventory> {
+                Text("fum")
+            }
+        }
     )
 }
 
 @Composable
 fun StoreOverviewContent(state: OverviewState, onItemClicked: (OverviewItemId) -> Unit) {
-    LazyColumn(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+    LazyColumn(
+        Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
+    ) {
         items(state.items) { item ->
             OverviewListItem(item, onItemClicked)
         }
@@ -53,7 +105,7 @@ fun StoreOverviewContent(state: OverviewState, onItemClicked: (OverviewItemId) -
 }
 
 @Composable
-fun OverviewListItem(item: OverViewItem, onItemClicked: (OverviewItemId) -> Unit) {
+fun OverviewListItem(item: OverviewItem, onItemClicked: (OverviewItemId) -> Unit) {
     ListItem(
         modifier = Modifier.clickable(onClick = { onItemClicked(item.id) }),
         headlineContent = { Text(item.title) }
@@ -64,6 +116,16 @@ fun OverviewListItem(item: OverViewItem, onItemClicked: (OverviewItemId) -> Unit
 @Composable
 fun PreviewStoreOverviewScreen() {
     ASWCMSTheme {
-        StoreOverviewScreen()
+        StoreOverviewContent(
+            OverviewState(
+                listOf(
+                    OverviewItem(OverviewItemId.ORDERS, "Orders"),
+                    OverviewItem(OverviewItemId.PRODUCTS, "Products"),
+                    OverviewItem(OverviewItemId.CUSTOMERS, "Customers"),
+                    OverviewItem(OverviewItemId.INVENTORY, "Inventory")
+                )
+            ),
+            {  }
+        )
     }
 }
