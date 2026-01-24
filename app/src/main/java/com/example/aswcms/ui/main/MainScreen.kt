@@ -13,6 +13,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,14 +23,27 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.aswcms.R
+import com.example.aswcms.ui.main.MainNavigationState.*
 import com.example.aswcms.ui.overview.StoreOverviewScreen
+import com.example.aswcms.ui.stores.LoadingSection
 import com.example.aswcms.ui.stores.StoresScreen
+import com.example.aswcms.ui.viewmodels.MainScreenIntent
+import com.example.aswcms.ui.viewmodels.MainScreenState
 import com.example.aswcms.ui.viewmodels.MainScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
-    val navigationState = remember { MainNavigationState(MainNavigationState.Stores) }
+    val state by viewModel.state.collectAsState()
+    val key = when(state) {
+        is MainScreenState.Overview -> StoreOverview((state as MainScreenState.Overview).storeId)
+        MainScreenState.Stores -> Stores
+
+
+        MainScreenState.Loading -> Loading
+    }
+    val navigationState = remember(key) { MainNavigationState(key) }
+
     Scaffold(
         Modifier
             .fillMaxSize(),
@@ -56,8 +71,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         floatingActionButton = {},
     ) { innerPadding ->
         val onStoreSelected: (Int) -> Unit = { storeId ->
-            navigationState.navigateUp()
-            navigationState.navigate(MainNavigationState.StoreOverview(storeId))
+            viewModel.onIntent(MainScreenIntent.RequestStoreOverView(storeId))
         }
 
         NavDisplay(
@@ -66,11 +80,14 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                 .fillMaxSize(),
             backStack = navigationState.backstack,
             entryProvider = entryProvider {
-                entry<MainNavigationState.Stores> {
+                entry<Stores> {
                     StoresScreen(onStoreClicked = onStoreSelected)
                 }
-                entry<MainNavigationState.StoreOverview> { key ->
-                    StoreOverviewScreen()
+                entry<StoreOverview> { key ->
+                    StoreOverviewScreen(key.storeId)
+                }
+                entry<Loading> {
+                    LoadingSection()
                 }
             }
         )

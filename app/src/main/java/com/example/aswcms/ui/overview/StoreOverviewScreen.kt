@@ -32,7 +32,7 @@ enum class OverviewItemId {
 
 
 @Composable
-fun StoreOverviewScreen() {
+fun StoreOverviewScreen(storeId: Int) {
 
     val onItemClicked: (OverviewItemId) -> Unit = { id ->
 

@@ -4,7 +4,10 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
-class MainNavigationState(state: NavKey) {
+class MainNavigationState(currentKey: NavKey) {
+
+    @Serializable
+    data object Loading: NavKey
 
     @Serializable
     data object Stores: NavKey
@@ -24,19 +27,25 @@ class MainNavigationState(state: NavKey) {
     @Serializable
     data object Inventory: NavKey
 
+    val backstack = mutableStateListOf<NavKey>(currentKey)
 
-    val backstack = mutableStateListOf(state)
+    val current: NavKey?
+        get() = backstack.lastOrNull()
 
-    val current = backstack.last()
-
-    val isTopLevel = current is Stores || current is StoreOverview
+    val isTopLevel: Boolean
+        get() = current is Stores || current is StoreOverview
 
     fun navigate(key: NavKey) {
         backstack.add(key)
     }
 
     fun navigateUp() {
-        backstack.removeLast()
+        backstack.removeLastOrNull()
+    }
+
+    fun resetTo(key: NavKey) {
+        backstack.clear()
+        backstack.add(key)
     }
 
 }

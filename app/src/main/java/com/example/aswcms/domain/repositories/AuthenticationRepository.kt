@@ -24,7 +24,7 @@ class AuthenticationRepository(
             saveIsLoggedIn(true)
             AuthenticationResult.LoginSuccess(
                 LoginSuccessData(
-                    User("Derrick", "Rocha"),
+                    User("sam", "sneed"),
                     "fjkdafsjdskfjlkdsjfklsdj="
                 )
             )
@@ -48,6 +48,12 @@ class AuthenticationRepository(
     suspend fun saveCurrentStoreId(storeId: Int) {
         datastore.edit { preferences ->
             preferences[CURRENT_STORE_ID] = storeId
+        }
+    }
+
+    suspend fun clearCurrentStore() {
+        datastore.edit { preferences ->
+            preferences.remove(CURRENT_STORE_ID)
         }
     }
 }
