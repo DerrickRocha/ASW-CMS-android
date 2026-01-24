@@ -39,15 +39,15 @@ class AuthenticationRepository(
         datastore.edit { preferences ->
             preferences[IS_LOGGED_IN] = isLoggedIn
         }
+    }
 
-        val currentStoreId = datastore.data.map { preferences ->
-            preferences[CURRENT_STORE_ID] ?: -1
-        }
+    val currentStoreId = datastore.data.map { preferences ->
+        preferences[CURRENT_STORE_ID] ?: -1
+    }
 
-        suspend fun saveCurrentStoreId(storeId: Int) {
-            datastore.edit { preferences ->
-                preferences[CURRENT_STORE_ID] = storeId
-            }
+    suspend fun saveCurrentStoreId(storeId: Int) {
+        datastore.edit { preferences ->
+            preferences[CURRENT_STORE_ID] = storeId
         }
     }
 }
