@@ -76,6 +76,8 @@ dependencies {
 
     // Datastore
     implementation("androidx.datastore:datastore-preferences:1.2.0")
+    implementation(libs.androidx.material3)
+    implementation("androidx.compose.material:material-icons-core:1.4.0")
     // Unit Testing
     testImplementation(libs.junit)
 
