@@ -1,4 +1,4 @@
-package com.example.aswcms.ui.store
+package com.example.aswcms.ui.stores
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
