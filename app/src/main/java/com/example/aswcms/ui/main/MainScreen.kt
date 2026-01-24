@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.aswcms.ui.main
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,10 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.aswcms.R
@@ -35,11 +39,9 @@ import com.example.aswcms.ui.viewmodels.MainScreenViewModel
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
     val state by viewModel.state.collectAsState()
-    val key = when(state) {
+    val key = when (state) {
         is MainScreenState.Overview -> StoreOverview((state as MainScreenState.Overview).storeId)
         MainScreenState.Stores -> Stores
-
-
         MainScreenState.Loading -> Loading
     }
     val navigationState = remember(key) { MainNavigationState(key) }
@@ -48,50 +50,67 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         Modifier
             .fillMaxSize(),
         topBar = {
-            TopAppBar(
-                modifier = Modifier.fillMaxWidth(),
-                title = { Text(text = stringResource(R.string.welcome)) },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        if(navigationState.isTopLevel) {
-                            // todo Open menu
-                        }
-                        else {
-                            navigationState.navigateUp()
-                        }
-                    }) {
-                        Icon(
-                            imageVector = if (navigationState.isTopLevel) Icons.Filled.Menu else Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Localized description"
-                        )
-                    }
+            MainTopAppBar(navigationState.isTopLevel) { isTopLevel ->
+                if (isTopLevel) {
+                    // todo Open menu
+                } else {
+                    navigationState.navigateUp()
                 }
-            )
+            }
         },
         floatingActionButton = {},
     ) { innerPadding ->
         val onStoreSelected: (Int) -> Unit = { storeId ->
             viewModel.onIntent(MainScreenIntent.RequestStoreOverView(storeId))
         }
-
-        NavDisplay(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            backStack = navigationState.backstack,
-            entryProvider = entryProvider {
-                entry<Stores> {
-                    StoresScreen(onStoreClicked = onStoreSelected)
-                }
-                entry<StoreOverview> { key ->
-                    StoreOverviewScreen(key.storeId)
-                }
-                entry<Loading> {
-                    LoadingSection()
-                }
-            }
+        MainNavigationDisplay(
+            Modifier.padding(innerPadding),
+            navigationState.backstack,
+            onStoreSelected
         )
     }
+}
+
+@Composable
+fun MainTopAppBar(isTopLevel: Boolean, onNavIconClicked: (Boolean) -> Unit) {
+    TopAppBar(
+        modifier = Modifier.fillMaxWidth(),
+        title = { Text(text = stringResource(R.string.welcome)) },
+        navigationIcon = {
+            IconButton(onClick = {
+                onNavIconClicked(isTopLevel)
+            }) {
+                Icon(
+                    imageVector = if (isTopLevel) Icons.Filled.Menu else Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Localized description"
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun MainNavigationDisplay(
+    modifier: Modifier,
+    backstack: SnapshotStateList<NavKey>,
+    onStoreSelected: (Int) -> Unit
+) {
+    NavDisplay(
+        modifier = modifier
+            .fillMaxSize(),
+        backStack = backstack,
+        entryProvider = entryProvider {
+            entry<Stores> {
+                StoresScreen(onStoreClicked = onStoreSelected)
+            }
+            entry<StoreOverview> { key ->
+                StoreOverviewScreen(key.storeId)
+            }
+            entry<Loading> {
+                LoadingSection()
+            }
+        }
+    )
 }
 
 @Preview("Home Screen", showSystemUi = true)
