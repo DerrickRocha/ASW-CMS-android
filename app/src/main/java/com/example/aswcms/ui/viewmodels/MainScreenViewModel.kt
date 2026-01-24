@@ -14,12 +14,12 @@ class MainScreenViewModel(private val repository: AuthenticationRepository = CMS
     val state: StateFlow<MainScreenState> = _state
 
     init {
-        /*viewModelScope.launch {
+        viewModelScope.launch {
             repository.currentStoreId.collect { storeId ->
                 _state.value =
                     if (storeId > 0) MainScreenState.Overview(storeId) else MainScreenState.Stores
             }
-        }*/
+        }
     }
 
     fun onIntent(intent: MainScreenIntent) {

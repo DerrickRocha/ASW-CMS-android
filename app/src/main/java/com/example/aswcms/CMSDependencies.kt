@@ -30,11 +30,13 @@ object CMSDependencies {
 
         GoogleSignInManager(credentialRequest, credentialManager)
     }
+
     val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
     val authenticationRepository: AuthenticationRepository by lazy {
         AuthenticationRepository(application.dataStore)
     }
+
     val storesRepository: StoresRepository by lazy {
         StoresRepository()
     }
