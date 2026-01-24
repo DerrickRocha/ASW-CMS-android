@@ -27,67 +27,26 @@ enum class OverviewItemId {
     ORDERS,
     PRODUCTS,
     CUSTOMERS,
-    INVENTORY
+    INVENTORY,
 }
 
-@Serializable
-data object OverviewKey : NavKey
-
-@Serializable
-data object Orders: NavKey
-
-@Serializable
-data object Products: NavKey
-
-@Serializable
-data object Customers: NavKey
-
-@Serializable
-data object Inventory: NavKey
 
 @Composable
 fun StoreOverviewScreen() {
-    val backstack = rememberNavBackStack(OverviewKey)
 
     val onItemClicked: (OverviewItemId) -> Unit = { id ->
-        when(id) {
-            OverviewItemId.ORDERS -> backstack.add(Orders)
-            OverviewItemId.PRODUCTS -> backstack.add(Products)
-            OverviewItemId.CUSTOMERS -> backstack.add(Customers)
-            OverviewItemId.INVENTORY -> backstack.add(Inventory)
-        }
+
     }
-    NavDisplay(
-        backStack = backstack,
-        modifier = Modifier,
-        onBack = { backstack.removeLastOrNull() },
-        entryProvider = entryProvider {
-            entry<OverviewKey> {
-                StoreOverviewContent(
-                    OverviewState(
-                        listOf(
-                            OverviewItem(OverviewItemId.ORDERS, "Orders"),
-                            OverviewItem(OverviewItemId.PRODUCTS, "Products"),
-                            OverviewItem(OverviewItemId.CUSTOMERS, "Customers"),
-                            OverviewItem(OverviewItemId.INVENTORY, "Inventory")
-                        )
-                    ),
-                    onItemClicked
-                )
-            }
-            entry<Orders> {
-                Text("Fee")
-            }
-            entry<Products> {
-                Text("fie")
-            }
-            entry<Customers> {
-                Text("foe")
-            }
-            entry<Inventory> {
-                Text("fum")
-            }
-        }
+    StoreOverviewContent(
+        OverviewState(
+            listOf(
+                OverviewItem(OverviewItemId.ORDERS, "Orders"),
+                OverviewItem(OverviewItemId.PRODUCTS, "Products"),
+                OverviewItem(OverviewItemId.CUSTOMERS, "Customers"),
+                OverviewItem(OverviewItemId.INVENTORY, "Inventory")
+            )
+        ),
+        onItemClicked
     )
 }
 
@@ -125,7 +84,7 @@ fun PreviewStoreOverviewScreen() {
                     OverviewItem(OverviewItemId.INVENTORY, "Inventory")
                 )
             ),
-            {  }
+            { }
         )
     }
 }
