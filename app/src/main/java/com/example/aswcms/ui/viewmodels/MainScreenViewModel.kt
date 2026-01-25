@@ -20,7 +20,7 @@ class MainScreenViewModel(private val repository: AuthenticationRepository = CMS
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MainScreenState.Loading)
 
-
+    val menuItems = listOf(MainMenuItem.Account, MainMenuItem.Stores, MainMenuItem.Logout)
 
 
     fun onIntent(intent: MainScreenIntent) {
@@ -36,8 +36,20 @@ class MainScreenViewModel(private val repository: AuthenticationRepository = CMS
                     repository.clearCurrentStore()
                 }
             }
+
+            MainScreenIntent.RequestLogout -> {
+                viewModelScope.launch {
+                    repository.saveIsLoggedIn(false)
+                }
+            }
         }
     }
+}
+
+sealed interface MainMenuItem {
+    data object Account : MainMenuItem
+    data object Stores : MainMenuItem
+    data object Logout : MainMenuItem
 }
 
 sealed interface MainScreenState {
@@ -50,4 +62,6 @@ sealed interface MainScreenState {
 sealed interface MainScreenIntent {
     object RequestStores : MainScreenIntent
     data class RequestStoreOverView(val storeId: Int) : MainScreenIntent
+
+    object RequestLogout: MainScreenIntent
 }
