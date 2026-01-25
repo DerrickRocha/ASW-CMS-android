@@ -63,13 +63,17 @@ fun StoresScreen(
     val onDismissAddStoreDialog = {
         isAddingStore.value = false
     }
+    val onSaveStoreClicked = {
+
+    }
     StoresScreenContent(
         state,
         isAddingStore.value,
         onRetry,
         onStoreClicked,
         onCreateStoreClicked,
-        onDismissAddStoreDialog
+        onDismissAddStoreDialog,
+        onSaveStoreClicked,
     )
 }
 
@@ -80,7 +84,8 @@ fun StoresScreenContent(
     onRetry: () -> Unit,
     onStoreClicked: (Int) -> Unit,
     onCreateStoreClicked: () -> Unit,
-    onDismissAddStoreDialog: () -> Unit
+    onDismissAddStoreDialog: () -> Unit,
+    onSaveStoreClicked: () -> Unit,
 ) {
     Scaffold(floatingActionButton = {
         FloatingActionButton(
@@ -101,7 +106,7 @@ fun StoresScreenContent(
         }
     }
     if (isAddingStore) {
-        AddStoreDialog(onDismissAddStoreDialog)
+        AddStoreDialog(onDismissAddStoreDialog, onSaveStoreClicked)
     }
 }
 
