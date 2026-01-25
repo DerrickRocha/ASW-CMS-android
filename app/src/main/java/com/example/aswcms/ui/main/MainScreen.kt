@@ -172,7 +172,7 @@ fun MainTopAppBar(isTopLevel: Boolean, onNavIconClicked: () -> Unit) {
 @Composable
 fun MainNavigationDisplay(
     modifier: Modifier,
-    backstack: SnapshotStateList<NavKey>,
+    backstack: List<NavKey>,
     onStoreSelected: (Int) -> Unit,
     onOverviewItemSelected: (OverviewItemId) -> Unit
 ) {
