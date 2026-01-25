@@ -20,9 +20,6 @@ class MainScreenViewModel(private val repository: AuthenticationRepository = CMS
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MainScreenState.Loading)
 
-
-
-
     fun onIntent(intent: MainScreenIntent) {
         when (intent) {
             is MainScreenIntent.RequestStoreOverView -> {

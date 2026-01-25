@@ -48,19 +48,21 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MainMenuItem.resolveMainMenuItemString(): String {
-    return when(this) {
+    return when (this) {
         MainMenuItem.Account -> stringResource(R.string.account)
         MainMenuItem.Logout -> stringResource(R.string.logout)
         MainMenuItem.Stores -> stringResource(R.string.stores)
     }
 }
+
 val menuItems = listOf(MainMenuItem.Account, MainMenuItem.Stores, MainMenuItem.Logout)
 
 sealed interface MainMenuItem {
-    data object Account: MainMenuItem
-    data object Stores: MainMenuItem
-    data object Logout: MainMenuItem
+    data object Account : MainMenuItem
+    data object Stores : MainMenuItem
+    data object Logout : MainMenuItem
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
@@ -76,13 +78,22 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet(drawerState) {
-                Column(Modifier.verticalScroll(rememberScrollState())){
-                    for(item in menuItems) {
+                Column(Modifier.verticalScroll(rememberScrollState())) {
+                    for (item in menuItems) {
                         NavigationDrawerItem(
                             selected = false,
                             label = { Text(item.resolveMainMenuItemString()) },
                             onClick = {
-
+                                when (item) {
+                                    MainMenuItem.Account -> {}
+                                    MainMenuItem.Logout -> {}
+                                    MainMenuItem.Stores -> {
+                                        viewModel.onIntent(MainScreenIntent.RequestStores)
+                                        scope.launch {
+                                            drawerState.close()
+                                        }
+                                    }
+                                }
                             }
                         )
                     }
