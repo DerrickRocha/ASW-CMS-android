@@ -4,4 +4,7 @@
     <string name="welcome">Welcome</string>
     <string name="menu">Menu</string>
     <string name="navigate_up">Navigate up</string>
+    <string name="account">Account</string>
+    <string name="logout">Logout</string>
+    <string name="stores">Stores</string>
 </resources>

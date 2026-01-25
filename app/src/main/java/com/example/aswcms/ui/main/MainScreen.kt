@@ -46,7 +46,21 @@ import com.example.aswcms.ui.viewmodels.MainScreenState
 import com.example.aswcms.ui.viewmodels.MainScreenViewModel
 import kotlinx.coroutines.launch
 
-val menuItems = listOf("Account", "Stores", "Logout")
+@Composable
+fun MainMenuItem.resolveMainMenuItemString(): String {
+    return when(this) {
+        MainMenuItem.Account -> stringResource(R.string.account)
+        MainMenuItem.Logout -> stringResource(R.string.logout)
+        MainMenuItem.Stores -> stringResource(R.string.stores)
+    }
+}
+val menuItems = listOf(MainMenuItem.Account, MainMenuItem.Stores, MainMenuItem.Logout)
+
+sealed interface MainMenuItem {
+    data object Account: MainMenuItem
+    data object Stores: MainMenuItem
+    data object Logout: MainMenuItem
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
@@ -66,8 +80,10 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                     for(item in menuItems) {
                         NavigationDrawerItem(
                             selected = false,
-                            label = {Text(item)},
-                            onClick = {}
+                            label = { Text(item.resolveMainMenuItemString()) },
+                            onClick = {
+
+                            }
                         )
                     }
                 }
