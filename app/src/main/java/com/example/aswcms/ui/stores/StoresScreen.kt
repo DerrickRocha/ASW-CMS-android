@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.aswcms.ui.stores
 
 import androidx.compose.foundation.Image
@@ -22,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -92,12 +95,10 @@ fun StoresScreenContent(
         }
     }) {
         Box(Modifier.fillMaxSize()) {
-            StoresList(state.stores, onStoreClicked)
-            if (state.isLoading) {
-                LoadingSection()
-            }
-            if (state.errorMessage != null) {
-                ErrorScreen(state.errorMessage, onRetry)
+            when (state) {
+                is StoresScreenState.Error -> ErrorScreen(state.message, onRetry)
+                StoresScreenState.Loading -> LoadingSection()
+                is StoresScreenState.Success -> StoresList(state.stores, onStoreClicked)
             }
         }
     }
@@ -126,6 +127,13 @@ fun AddStoreDialog(onDismissAddStoreDialog: () -> Unit) {
             }
         }
     }
+}
+
+@Composable
+fun AddStoreDialogAppBar() {
+    TopAppBar(
+        title = { Text("Add a Store") }
+    )
 }
 
 @Composable
