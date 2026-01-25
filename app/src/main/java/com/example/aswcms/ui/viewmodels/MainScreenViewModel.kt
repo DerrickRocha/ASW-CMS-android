@@ -33,6 +33,12 @@ class MainScreenViewModel(private val repository: AuthenticationRepository = CMS
                     repository.clearCurrentStore()
                 }
             }
+
+            MainScreenIntent.RequestLogout -> {
+                viewModelScope.launch {
+                    repository.saveIsLoggedIn(false)
+                }
+            }
         }
     }
 }
@@ -47,4 +53,6 @@ sealed interface MainScreenState {
 sealed interface MainScreenIntent {
     object RequestStores : MainScreenIntent
     data class RequestStoreOverView(val storeId: Int) : MainScreenIntent
+
+    object RequestLogout: MainScreenIntent
 }

@@ -85,8 +85,12 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                             label = { Text(item.resolveMainMenuItemString()) },
                             onClick = {
                                 when (item) {
-                                    MainMenuItem.Account -> {}
-                                    MainMenuItem.Logout -> {}
+                                    MainMenuItem.Account -> {
+
+                                    }
+                                    MainMenuItem.Logout -> {
+                                        viewModel.onIntent(MainScreenIntent.RequestLogout)
+                                    }
                                     MainMenuItem.Stores -> {
                                         viewModel.onIntent(MainScreenIntent.RequestStores)
                                         scope.launch {
