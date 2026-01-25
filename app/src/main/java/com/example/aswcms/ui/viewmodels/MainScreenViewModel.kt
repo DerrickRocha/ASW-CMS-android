@@ -20,6 +20,9 @@ class MainScreenViewModel(private val repository: AuthenticationRepository = CMS
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MainScreenState.Loading)
 
+    val menuItems = listOf(MainMenuItem.Account, MainMenuItem.Stores, MainMenuItem.Logout)
+
+
     fun onIntent(intent: MainScreenIntent) {
         when (intent) {
             is MainScreenIntent.RequestStoreOverView -> {
@@ -41,6 +44,12 @@ class MainScreenViewModel(private val repository: AuthenticationRepository = CMS
             }
         }
     }
+}
+
+sealed interface MainMenuItem {
+    data object Account : MainMenuItem
+    data object Stores : MainMenuItem
+    data object Logout : MainMenuItem
 }
 
 sealed interface MainScreenState {
