@@ -2,15 +2,23 @@
 
 package com.example.aswcms.ui.main
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,18 +27,23 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -75,6 +88,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
     val navigationState = remember(key) { MainNavigationState(key) }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val confirmLogoutState = remember { mutableStateOf(false) }
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet(drawerState) {
@@ -88,9 +102,11 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                                     MainMenuItem.Account -> {
 
                                     }
+
                                     MainMenuItem.Logout -> {
-                                        viewModel.onIntent(MainScreenIntent.RequestLogout)
+                                        confirmLogoutState.value = true
                                     }
+
                                     MainMenuItem.Stores -> {
                                         viewModel.onIntent(MainScreenIntent.RequestStores)
                                         scope.launch {
@@ -145,8 +161,54 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
             )
         }
     }
+    CMSSimpleDialog(
+        show = confirmLogoutState.value,
+        onConfirmSelected = {
+            viewModel.onIntent(MainScreenIntent.RequestLogout)
+        },
+        onDismissRequest = {
+            confirmLogoutState.value = false
+        })
+}
 
+@Composable
+fun CMSSimpleDialog(show: Boolean, onConfirmSelected: () -> Unit, onDismissRequest: () -> Unit) {
+    if (show) {
+        BasicAlertDialog(onDismissRequest = onDismissRequest) {
+            Surface(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    Modifier
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text("Would you like to logout?")
+                    Spacer(Modifier.height(24.dp))
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        TextButton(
+                            onClick = onDismissRequest,
+                            modifier = Modifier
+                        ) {
+                            Text("cancel")
+                        }
+                        TextButton(
+                            onClick = onConfirmSelected,
+                            modifier = Modifier
+                        ) {
+                            Text("confirm")
+                        }
+                    }
 
+                }
+
+            }
+        }
+    }
 }
 
 @Composable
@@ -209,5 +271,5 @@ fun MainNavigationDisplay(
 @Preview("Home Screen", showSystemUi = true)
 @Composable
 fun MainScreenPreview() {
-    MainScreen()
+    CMSSimpleDialog(true, {}) {}
 }
