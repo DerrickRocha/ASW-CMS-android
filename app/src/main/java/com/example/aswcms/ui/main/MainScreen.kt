@@ -2,22 +2,31 @@
 
 package com.example.aswcms.ui.main
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,7 +44,9 @@ import com.example.aswcms.ui.stores.StoresScreen
 import com.example.aswcms.ui.viewmodels.MainScreenIntent
 import com.example.aswcms.ui.viewmodels.MainScreenState
 import com.example.aswcms.ui.viewmodels.MainScreenViewModel
+import kotlinx.coroutines.launch
 
+val menuItems = listOf("Account", "Stores", "Logout")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
@@ -46,39 +57,65 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         MainScreenState.Loading -> Loading
     }
     val navigationState = remember(key) { MainNavigationState(key) }
-
-    Scaffold(
-        Modifier
-            .fillMaxSize(),
-        topBar = {
-            MainTopAppBar(navigationState.isTopLevel) { isTopLevel ->
-                if (isTopLevel) {
-                    // todo Open menu
-                } else {
-                    navigationState.navigateUp()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    ModalNavigationDrawer(
+        drawerContent = {
+            ModalDrawerSheet(drawerState) {
+                Column(Modifier.verticalScroll(rememberScrollState())){
+                    for(item in menuItems) {
+                        NavigationDrawerItem(
+                            selected = false,
+                            label = {Text(item)},
+                            onClick = {}
+                        )
+                    }
                 }
             }
         },
-        floatingActionButton = {},
-    ) { innerPadding ->
-        val onStoreSelected: (Int) -> Unit = { storeId ->
-            viewModel.onIntent(MainScreenIntent.RequestStoreOverView(storeId))
-        }
-        val onOverviewItemSelected: (OverviewItemId) -> Unit = { id ->
-            when(id) {
-                OverviewItemId.ORDERS -> navigationState.navigate(Orders)
-                OverviewItemId.PRODUCTS -> navigationState.navigate(Products)
-                OverviewItemId.CUSTOMERS -> navigationState.navigate(Customers)
-                OverviewItemId.INVENTORY -> navigationState.navigate(Inventory)
+        drawerState = drawerState
+    ) {
+        Scaffold(
+            Modifier
+                .fillMaxSize(),
+            topBar = {
+                MainTopAppBar(navigationState.isTopLevel) { isTopLevel ->
+                    if (isTopLevel) {
+                        scope.launch {
+                            if (drawerState.isOpen) {
+                                drawerState.close()
+                            } else {
+                                drawerState.open()
+                            }
+                        }
+                    } else {
+                        navigationState.navigateUp()
+                    }
+                }
+            },
+            floatingActionButton = {},
+        ) { innerPadding ->
+            val onStoreSelected: (Int) -> Unit = { storeId ->
+                viewModel.onIntent(MainScreenIntent.RequestStoreOverView(storeId))
             }
+            val onOverviewItemSelected: (OverviewItemId) -> Unit = { id ->
+                when (id) {
+                    OverviewItemId.ORDERS -> navigationState.navigate(Orders)
+                    OverviewItemId.PRODUCTS -> navigationState.navigate(Products)
+                    OverviewItemId.CUSTOMERS -> navigationState.navigate(Customers)
+                    OverviewItemId.INVENTORY -> navigationState.navigate(Inventory)
+                }
+            }
+            MainNavigationDisplay(
+                Modifier.padding(innerPadding),
+                navigationState.backstack,
+                onStoreSelected,
+                onOverviewItemSelected
+            )
         }
-        MainNavigationDisplay(
-            Modifier.padding(innerPadding),
-            navigationState.backstack,
-            onStoreSelected,
-            onOverviewItemSelected
-        )
     }
+
+
 }
 
 @Composable
@@ -92,7 +129,7 @@ fun MainTopAppBar(isTopLevel: Boolean, onNavIconClicked: (Boolean) -> Unit) {
             }) {
                 Icon(
                     imageVector = if (isTopLevel) Icons.Filled.Menu else Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = if(isTopLevel) stringResource(R.string.menu) else stringResource(
+                    contentDescription = if (isTopLevel) stringResource(R.string.menu) else stringResource(
                         R.string.navigate_up
                     )
                 )
