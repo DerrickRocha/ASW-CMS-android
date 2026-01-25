@@ -30,5 +30,5 @@ class StoresScreenViewModel(private val repository: StoresRepository = CMSDepend
 data class StoresScreenState(
     val isLoading: Boolean = false,
     val stores: List<Store> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
 )
