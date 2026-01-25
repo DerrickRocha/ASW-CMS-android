@@ -3,7 +3,7 @@ package com.example.aswcms.extensions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.example.aswcms.R
-import com.example.aswcms.ui.main.MainMenuItem
+import com.example.aswcms.ui.viewmodels.MainMenuItem
 
 @Composable
 fun MainMenuItem.resolveMainMenuItemString(): String {
