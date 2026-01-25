@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.aswcms.R
 import com.example.aswcms.domain.models.Store
+import com.example.aswcms.ui.components.LoadingSection
 import com.example.aswcms.ui.theme.ASWCMSTheme
 import com.example.aswcms.ui.viewmodels.StoresScreenState
 import com.example.aswcms.ui.viewmodels.StoresScreenViewModel
@@ -85,13 +85,6 @@ fun StoreCard(store: Store, onStoreClicked: (Int) -> Unit) {
             Spacer(Modifier.width(8.dp))
             Text(text = store.name, fontSize = 22.sp)
         }
-    }
-}
-
-@Composable
-fun LoadingSection() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
     }
 }
 

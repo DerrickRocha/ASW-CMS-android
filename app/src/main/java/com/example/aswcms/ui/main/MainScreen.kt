@@ -27,9 +27,10 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.aswcms.R
+import com.example.aswcms.ui.components.LoadingSection
 import com.example.aswcms.ui.main.MainNavigationState.*
+import com.example.aswcms.ui.overview.OverviewItemId
 import com.example.aswcms.ui.overview.StoreOverviewScreen
-import com.example.aswcms.ui.stores.LoadingSection
 import com.example.aswcms.ui.stores.StoresScreen
 import com.example.aswcms.ui.viewmodels.MainScreenIntent
 import com.example.aswcms.ui.viewmodels.MainScreenState
@@ -63,10 +64,19 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         val onStoreSelected: (Int) -> Unit = { storeId ->
             viewModel.onIntent(MainScreenIntent.RequestStoreOverView(storeId))
         }
+        val onOverviewItemSelected: (OverviewItemId) -> Unit = { id ->
+            when(id) {
+                OverviewItemId.ORDERS -> navigationState.navigate(Orders)
+                OverviewItemId.PRODUCTS -> navigationState.navigate(Products)
+                OverviewItemId.CUSTOMERS -> navigationState.navigate(Customers)
+                OverviewItemId.INVENTORY -> navigationState.navigate(Inventory)
+            }
+        }
         MainNavigationDisplay(
             Modifier.padding(innerPadding),
             navigationState.backstack,
-            onStoreSelected
+            onStoreSelected,
+            onOverviewItemSelected
         )
     }
 }
@@ -82,7 +92,9 @@ fun MainTopAppBar(isTopLevel: Boolean, onNavIconClicked: (Boolean) -> Unit) {
             }) {
                 Icon(
                     imageVector = if (isTopLevel) Icons.Filled.Menu else Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Localized description"
+                    contentDescription = if(isTopLevel) stringResource(R.string.menu) else stringResource(
+                        R.string.navigate_up
+                    )
                 )
             }
         }
@@ -93,7 +105,8 @@ fun MainTopAppBar(isTopLevel: Boolean, onNavIconClicked: (Boolean) -> Unit) {
 fun MainNavigationDisplay(
     modifier: Modifier,
     backstack: SnapshotStateList<NavKey>,
-    onStoreSelected: (Int) -> Unit
+    onStoreSelected: (Int) -> Unit,
+    onOverviewItemSelected: (OverviewItemId) -> Unit
 ) {
     NavDisplay(
         modifier = modifier
@@ -104,10 +117,22 @@ fun MainNavigationDisplay(
                 StoresScreen(onStoreClicked = onStoreSelected)
             }
             entry<StoreOverview> { key ->
-                StoreOverviewScreen(key.storeId)
+                StoreOverviewScreen(key.storeId, onOverviewItemSelected)
             }
             entry<Loading> {
                 LoadingSection()
+            }
+            entry<Orders> {
+                Text(text = "fe")
+            }
+            entry<Products> {
+                Text(text = "fi")
+            }
+            entry<Customers> {
+                Text(text = "fo")
+            }
+            entry<Inventory> {
+                Text("fum")
             }
         }
     )

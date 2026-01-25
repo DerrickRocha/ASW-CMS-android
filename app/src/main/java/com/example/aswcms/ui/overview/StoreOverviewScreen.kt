@@ -12,12 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.ui.NavDisplay
 import com.example.aswcms.ui.theme.ASWCMSTheme
-import kotlinx.serialization.Serializable
 
 
 data class OverviewState(val items: List<OverviewItem>)
@@ -32,11 +27,8 @@ enum class OverviewItemId {
 
 
 @Composable
-fun StoreOverviewScreen(storeId: Int) {
+fun StoreOverviewScreen(storeId: Int, onOverviewItemSelected: (OverviewItemId) -> Unit) {
 
-    val onItemClicked: (OverviewItemId) -> Unit = { id ->
-
-    }
     StoreOverviewContent(
         OverviewState(
             listOf(
@@ -46,7 +38,7 @@ fun StoreOverviewScreen(storeId: Int) {
                 OverviewItem(OverviewItemId.INVENTORY, "Inventory")
             )
         ),
-        onItemClicked
+        onOverviewItemSelected
     )
 }
 
