@@ -49,6 +49,7 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.aswcms.R
+import com.example.aswcms.ui.components.CMSSimpleDialog
 import com.example.aswcms.ui.components.LoadingSection
 import com.example.aswcms.ui.main.MainNavigationState.*
 import com.example.aswcms.ui.overview.OverviewItemId
@@ -162,6 +163,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         }
     }
     CMSSimpleDialog(
+        message = stringResource(R.string.would_you_like_to_logout),
         show = confirmLogoutState.value,
         onConfirmSelected = {
             viewModel.onIntent(MainScreenIntent.RequestLogout)
@@ -169,46 +171,6 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
         onDismissRequest = {
             confirmLogoutState.value = false
         })
-}
-
-@Composable
-fun CMSSimpleDialog(show: Boolean, onConfirmSelected: () -> Unit, onDismissRequest: () -> Unit) {
-    if (show) {
-        BasicAlertDialog(onDismissRequest = onDismissRequest) {
-            Surface(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .wrapContentHeight(),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(
-                    Modifier
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text("Would you like to logout?")
-                    Spacer(Modifier.height(24.dp))
-                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                        TextButton(
-                            onClick = onDismissRequest,
-                            modifier = Modifier
-                        ) {
-                            Text("cancel")
-                        }
-                        TextButton(
-                            onClick = onConfirmSelected,
-                            modifier = Modifier
-                        ) {
-                            Text("confirm")
-                        }
-                    }
-
-                }
-
-            }
-        }
-    }
 }
 
 @Composable
@@ -271,5 +233,5 @@ fun MainNavigationDisplay(
 @Preview("Home Screen", showSystemUi = true)
 @Composable
 fun MainScreenPreview() {
-    CMSSimpleDialog(true, {}) {}
+    CMSSimpleDialog("",true, {}) {}
 }
