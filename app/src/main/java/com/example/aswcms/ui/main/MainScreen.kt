@@ -111,7 +111,10 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
                     for (item in viewModel.menuItems) {
                         NavigationDrawerItem(
-                            selected = false,
+                            selected = when(item) {
+                                MainMenuItem.Stores -> navigationState.current is Stores
+                                else -> false
+                            },
                             label = { Text(stringResource(item.resolveMainMenuItemString())) },
                             onClick = { onNavigationDrawerItemClicked(item) }
                         )
