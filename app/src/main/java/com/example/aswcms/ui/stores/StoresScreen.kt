@@ -38,8 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.aswcms.R
 import com.example.aswcms.domain.models.Store
@@ -105,35 +103,6 @@ fun StoresScreenContent(
     if (isAddingStore) {
         AddStoreDialog(onDismissAddStoreDialog)
     }
-}
-
-@Composable
-fun AddStoreDialog(onDismissAddStoreDialog: () -> Unit) {
-    Dialog(
-        onDismissRequest = onDismissAddStoreDialog, properties = DialogProperties(
-            usePlatformDefaultWidth = false, // Crucial for allowing the dialog to be full width
-            decorFitsSystemWindows = false // Helps manage system bars (status/nav bar)
-        )
-    ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Text("This is a full-screen dialog!")
-                    // ... add a close button or top app bar here
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun AddStoreDialogAppBar() {
-    TopAppBar(
-        title = { Text("Add a Store") }
-    )
 }
 
 @Composable
