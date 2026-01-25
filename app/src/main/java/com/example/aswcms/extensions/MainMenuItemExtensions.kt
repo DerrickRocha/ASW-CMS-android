@@ -1,15 +1,14 @@
 package com.example.aswcms.extensions
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import com.example.aswcms.R
 import com.example.aswcms.ui.viewmodels.MainMenuItem
 
 @Composable
-fun MainMenuItem.resolveMainMenuItemString(): String {
+fun MainMenuItem.resolveMainMenuItemString(): Int {
     return when (this) {
-        MainMenuItem.Account -> stringResource(R.string.account)
-        MainMenuItem.Logout -> stringResource(R.string.logout)
-        MainMenuItem.Stores -> stringResource(R.string.stores)
+        MainMenuItem.Account -> R.string.account
+        MainMenuItem.Logout -> R.string.logout
+        MainMenuItem.Stores -> R.string.stores
     }
 }

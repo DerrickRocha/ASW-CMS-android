@@ -112,7 +112,7 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
                     for (item in viewModel.menuItems) {
                         NavigationDrawerItem(
                             selected = false,
-                            label = { Text(item.resolveMainMenuItemString()) },
+                            label = { Text(stringResource(item.resolveMainMenuItemString())) },
                             onClick = { onNavigationDrawerItemClicked(item) }
                         )
                     }
