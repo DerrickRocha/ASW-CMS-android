@@ -65,8 +65,8 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
     val scope = rememberCoroutineScope()
     val confirmLogoutState = rememberSaveable { mutableStateOf(false) }
 
-    val onNavIconClicked: (Boolean) -> Unit = { isTopLevel ->
-        if (isTopLevel) {
+    val onNavIconClicked: () -> Unit = {
+        if (navigationState.isTopLevel) {
             scope.launch {
                 if (drawerState.isOpen) {
                     drawerState.close()
@@ -125,7 +125,8 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
             Modifier
                 .fillMaxSize(),
             topBar = {
-                MainTopAppBar(navigationState.isTopLevel, onNavIconClicked)},
+                MainTopAppBar(navigationState.isTopLevel, onNavIconClicked)
+            },
             floatingActionButton = {},
         ) { innerPadding ->
             MainNavigationDisplay(
@@ -148,14 +149,15 @@ fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
 }
 
 @Composable
-fun MainTopAppBar(isTopLevel: Boolean, onNavIconClicked: (Boolean) -> Unit) {
+fun MainTopAppBar(isTopLevel: Boolean, onNavIconClicked: () -> Unit) {
     TopAppBar(
         modifier = Modifier.fillMaxWidth(),
         title = { Text(text = stringResource(R.string.welcome)) },
         navigationIcon = {
-            IconButton(onClick = {
-                onNavIconClicked(isTopLevel)
-            }) {
+            IconButton(
+                onClick = {
+                    onNavIconClicked()
+                }) {
                 Icon(
                     imageVector = if (isTopLevel) Icons.Filled.Menu else Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = if (isTopLevel) stringResource(R.string.menu) else stringResource(
@@ -207,5 +209,5 @@ fun MainNavigationDisplay(
 @Preview("Home Screen", showSystemUi = true)
 @Composable
 fun MainScreenPreview() {
-    CMSSimpleDialog("",true, {}) {}
+    CMSSimpleDialog("", true, {}) {}
 }
