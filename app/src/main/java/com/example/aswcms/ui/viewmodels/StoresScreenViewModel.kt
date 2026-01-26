@@ -32,3 +32,4 @@ sealed interface StoresScreenState {
     data class Success(val stores: List<Store>) : StoresScreenState
     data class Error(val message: String) : StoresScreenState
 }
+
