@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.aswcms.ui.components.CMSSimpleDialog
 import com.example.aswcms.ui.components.LoadingSection
@@ -55,7 +56,7 @@ fun AddStoreScreen(
         viewModel.onDomainNameChanged(value)
     }
 
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
@@ -83,7 +84,7 @@ fun AddStoreScreen(
                 onStoreNameChanged,
                 onDomainChanged
             )
-            CMSSimpleDialog("", show = state.error != null, {}, {
+            CMSSimpleDialog("Error saving store", show = state.error != null, {}, {
                 viewModel.onErrorDismissed()
             })
             if(state.isSaving) {
