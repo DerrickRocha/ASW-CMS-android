@@ -27,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.aswcms.R
 import com.example.aswcms.ui.components.CMSSimpleDialog
 import com.example.aswcms.ui.components.LoadingSection
 import com.example.aswcms.ui.viewmodels.AddStoreEvent
@@ -84,10 +86,14 @@ fun AddStoreScreen(
                 onStoreNameChanged,
                 onDomainChanged
             )
-            CMSSimpleDialog("Error saving store", show = state.error != null, {}, {
-                viewModel.onErrorDismissed()
-            })
-            if(state.isSaving) {
+            CMSSimpleDialog(
+                stringResource(R.string.error_saving_store),
+                show = state.error != null,
+                {},
+                {
+                    viewModel.onErrorDismissed()
+                })
+            if (state.isSaving) {
                 LoadingSection()
             }
         }
@@ -117,7 +123,7 @@ fun AddStoreDialogSection(
                 TextField(
                     value = storeName,
                     onValueChange = onStoreNameChanged,
-                    label = { Text("Store name") },
+                    label = { Text(stringResource(R.string.store_name)) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(8.dp))
@@ -125,7 +131,7 @@ fun AddStoreDialogSection(
                     modifier = Modifier.fillMaxWidth(),
                     value = domain,
                     onValueChange = onDomainChanged,
-                    label = { Text("Domain") }
+                    label = { Text(stringResource(R.string.domain)) }
                 )
             }
         }
@@ -137,12 +143,15 @@ fun AddStoreTopAppBar(onSaveClicked: () -> Unit, onCancelClicked: () -> Unit) {
     TopAppBar(
         title = {
             Text(
-                text = "Add a new store", maxLines = 1, overflow = TextOverflow.Ellipsis
+                text = stringResource(R.string.add_a_new_store),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }, navigationIcon = {
             IconButton(onClick = onCancelClicked) {
                 Icon(
-                    imageVector = Icons.Default.Close, contentDescription = "Close dialog"
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(R.string.close_dialog)
                 )
             }
         }, actions = {
