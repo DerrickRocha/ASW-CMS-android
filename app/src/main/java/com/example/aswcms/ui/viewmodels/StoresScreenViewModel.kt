@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class StoresScreenViewModel(private val repository: StoresRepository = CMSDependencies.storesRepository): ViewModel() {
 
-    private val _state = MutableStateFlow(StoresScreenState())
+    private val _state = MutableStateFlow<StoresScreenState>(StoresScreenState.Loading)
     val state: StateFlow<StoresScreenState> = _state.asStateFlow()
 
     init{
@@ -22,13 +22,14 @@ class StoresScreenViewModel(private val repository: StoresRepository = CMSDepend
     private fun loadStores() {
         viewModelScope.launch{
             val stores = repository.loadStores()
-            _state.value = _state.value.copy(stores = stores)
+            _state.value = StoresScreenState.Success(stores)
         }
     }
 }
 
-data class StoresScreenState(
-    val isLoading: Boolean = false,
-    val stores: List<Store> = emptyList(),
-    val errorMessage: String? = null
-)
+sealed interface StoresScreenState {
+    data object Loading : StoresScreenState
+    data class Success(val stores: List<Store>) : StoresScreenState
+    data class Error(val message: String) : StoresScreenState
+}
+

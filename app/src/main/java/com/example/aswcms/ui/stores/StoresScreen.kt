@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.aswcms.ui.stores
 
 import androidx.compose.foundation.Image
@@ -11,13 +13,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -36,28 +45,60 @@ import com.example.aswcms.ui.viewmodels.StoresScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StoresScreen(viewModel: StoresScreenViewModel = viewModel(), onStoreClicked: (Int) -> Unit) {
+fun StoresScreen(
+    viewModel: StoresScreenViewModel = viewModel(),
+    onStoreClicked: (Int) -> Unit
+) {
     val state by viewModel.state.collectAsState()
     val onRetry = {
 
     }
-    StoresScreenContent(state, onRetry, onStoreClicked)
+    val isAddingStore = rememberSaveable { mutableStateOf(false) }
+    val onCreateStoreClicked = {
+        isAddingStore.value = true
+    }
+    val onDismissAddStoreDialog = {
+        isAddingStore.value = false
+    }
+    StoresScreenContent(
+        state,
+        isAddingStore.value,
+        onRetry,
+        onStoreClicked,
+        onCreateStoreClicked,
+        onDismissAddStoreDialog,
+    )
 }
 
 @Composable
 fun StoresScreenContent(
     state: StoresScreenState,
+    isAddingStore: Boolean,
     onRetry: () -> Unit,
-    onStoreClicked: (Int) -> Unit
+    onStoreClicked: (Int) -> Unit,
+    onCreateStoreClicked: () -> Unit,
+    onDismissAddStoreDialog: () -> Unit,
 ) {
-    Box(Modifier.fillMaxSize()) {
-        StoresList(state.stores, onStoreClicked)
-        if (state.isLoading) {
-            LoadingSection()
+    Scaffold(floatingActionButton = {
+        FloatingActionButton(
+            onClick = onCreateStoreClicked
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "Add a new store"
+            )
         }
-        if (state.errorMessage != null) {
-            ErrorScreen(state.errorMessage, onRetry)
+    }) {
+        Box(Modifier.fillMaxSize()) {
+            when (state) {
+                is StoresScreenState.Error -> ErrorScreen(state.message, onRetry)
+                StoresScreenState.Loading -> LoadingSection()
+                is StoresScreenState.Success -> StoresList(state.stores, onStoreClicked)
+            }
         }
+    }
+    if (isAddingStore) {
+        AddStoreScreen(onDismissAddStoreDialog = onDismissAddStoreDialog)
     }
 }
 
