@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,7 +39,7 @@ import com.example.aswcms.ui.viewmodels.AddStoreEvent
 import com.example.aswcms.ui.viewmodels.AddStoreScreenViewModel
 
 @Composable
-fun AddStoreDialog(
+fun AddStoreScreen(
     viewModel: AddStoreScreenViewModel = viewModel(), onDismissAddStoreDialog: () -> Unit
 ) {
 
@@ -58,7 +57,7 @@ fun AddStoreDialog(
 
     val state by viewModel.state.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
                 AddStoreEvent.Success -> {
@@ -159,6 +158,6 @@ fun AddStoreTopAppBar(onSaveClicked: () -> Unit, onCancelClicked: () -> Unit) {
 
 @Preview
 @Composable
-fun AddStoreDialogPreview() {
-    AddStoreDialog {}
+fun AddStoreScreenPreview() {
+    AddStoreScreen {}
 }
