@@ -158,7 +158,7 @@ fun AddStoreTopAppBar(onSaveClicked: () -> Unit, onCancelClicked: () -> Unit) {
             TextButton(
                 onClick = onSaveClicked, enabled = true
             ) {
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
         }, colors = topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface

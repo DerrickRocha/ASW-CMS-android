@@ -15,4 +15,5 @@
     <string name="domain">Domain</string>
     <string name="add_a_new_store">Add a new store</string>
     <string name="close_dialog">Close dialog</string>
+    <string name="save">Save</string>
 </resources>
