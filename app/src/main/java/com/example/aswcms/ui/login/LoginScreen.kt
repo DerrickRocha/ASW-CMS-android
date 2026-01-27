@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,35 +27,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.example.aswcms.CMSDependencies
 import com.example.aswcms.R
-import com.example.aswcms.domain.SignInResult
 import com.example.aswcms.ui.theme.ASWCMSTheme
 import com.example.aswcms.ui.theme.Typography
 import com.example.aswcms.ui.viewmodels.LoginEffect
+import com.example.aswcms.ui.viewmodels.LoginIntent
 import com.example.aswcms.ui.viewmodels.LoginState
 import com.example.aswcms.ui.viewmodels.LoginViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(), onLoginComplete: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     val onSignInClicked: () -> Unit = {
-        scope.launch {
-            when (val result = CMSDependencies.googleManager.signIn(context)) {
-                SignInResult.CancelledByUser -> {}
-                is SignInResult.Failure -> Toast.makeText(
-                    context,
-                    result.cause.message,
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                is SignInResult.Success -> viewModel.onLoginIntent(result.token)
-            }
-        }
+        viewModel.onIntent(LoginIntent.LoginToGoogle(context))
     }
 
     val state by viewModel.state.collectAsState()
