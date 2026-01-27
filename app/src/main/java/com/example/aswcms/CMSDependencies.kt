@@ -37,8 +37,4 @@ object CMSDependencies {
         AuthenticationRepository(application.dataStore)
     }
 
-    val storesRepository: StoresRepository by lazy {
-        StoresRepository()
-    }
-
 }
