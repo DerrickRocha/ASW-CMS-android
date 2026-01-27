@@ -2,15 +2,18 @@ package com.example.aswcms.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aswcms.CMSDependencies
 import com.example.aswcms.domain.models.Store
 import com.example.aswcms.domain.repositories.StoresRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class StoresScreenViewModel(private val repository: StoresRepository = CMSDependencies.storesRepository): ViewModel() {
+
+@HiltViewModel
+class StoresScreenViewModel @Inject constructor(val repository: StoresRepository): ViewModel() {
 
     private val _state = MutableStateFlow<StoresScreenState>(StoresScreenState.Loading)
     val state: StateFlow<StoresScreenState> = _state.asStateFlow()

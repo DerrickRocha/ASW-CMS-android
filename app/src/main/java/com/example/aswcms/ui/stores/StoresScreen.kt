@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.example.aswcms.ui.stores
 
 import androidx.compose.foundation.Image
@@ -35,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.aswcms.R
 import com.example.aswcms.domain.models.Store
@@ -46,7 +45,7 @@ import com.example.aswcms.ui.viewmodels.StoresScreenViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StoresScreen(
-    viewModel: StoresScreenViewModel = viewModel(),
+    viewModel: StoresScreenViewModel = hiltViewModel(),
     onStoreClicked: (Int) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
