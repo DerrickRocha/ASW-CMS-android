@@ -2,15 +2,17 @@ package com.example.aswcms.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aswcms.CMSDependencies
 import com.example.aswcms.domain.repositories.AuthenticationRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainScreenViewModel(private val repository: AuthenticationRepository = CMSDependencies.authenticationRepository) :
+@HiltViewModel
+class MainScreenViewModel @Inject constructor(private val repository: AuthenticationRepository) :
     ViewModel() {
     val state: StateFlow<MainScreenState> = repository.currentStoreId.map { storeId ->
         if (storeId > 0) {

@@ -9,8 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation3.runtime.NavKey
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.aswcms.ui.main.MainScreen
 import com.example.aswcms.ui.login.LoginScreen
 import com.example.aswcms.ui.splash.SplashScreen
@@ -18,10 +17,9 @@ import com.example.aswcms.ui.theme.ASWCMSTheme
 import com.example.aswcms.ui.viewmodels.CMSAppIntent
 import com.example.aswcms.ui.viewmodels.CMSAppState
 import com.example.aswcms.ui.viewmodels.CMSAppViewModel
-import kotlinx.serialization.Serializable
 
 @Composable
-fun CMSApp(viewModel: CMSAppViewModel = viewModel()) {
+fun CMSApp(viewModel: CMSAppViewModel = hiltViewModel()) {
 
     val state by viewModel.cmsAppState.collectAsState()
 

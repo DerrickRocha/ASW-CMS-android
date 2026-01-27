@@ -2,16 +2,18 @@ package com.example.aswcms.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aswcms.CMSDependencies
 import com.example.aswcms.domain.repositories.AuthenticationRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AddStoreScreenViewModel(val repository: AuthenticationRepository = CMSDependencies.authenticationRepository): ViewModel() {
+@HiltViewModel
+class AddStoreScreenViewModel @Inject constructor(): ViewModel() {
 
     private val _state = MutableStateFlow(AddStoreScreenState())
     val state: StateFlow<AddStoreScreenState> = _state
