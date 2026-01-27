@@ -11,8 +11,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AddStoreScreenViewModel(val repository: AuthenticationRepository = CMSDependencies.authenticationRepository): ViewModel() {
+@HiltViewModel
+class AddStoreScreenViewModel @Inject constructor(): ViewModel() {
 
     private val _state = MutableStateFlow(AddStoreScreenState())
     val state: StateFlow<AddStoreScreenState> = _state

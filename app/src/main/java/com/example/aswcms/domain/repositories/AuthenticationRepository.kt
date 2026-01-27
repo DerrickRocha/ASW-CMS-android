@@ -5,16 +5,19 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import com.example.aswcms.di.IoDispatcher
 import com.example.aswcms.domain.models.LoginSuccessData
 import com.example.aswcms.domain.models.User
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AuthenticationRepository(
+@Singleton
+class AuthenticationRepository @Inject constructor(
     private val datastore: DataStore<Preferences>,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    @param:IoDispatcher private val dispatcher: CoroutineDispatcher
 ) {
 
     val CURRENT_STORE_ID = intPreferencesKey("store_id")

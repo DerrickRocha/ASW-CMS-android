@@ -2,13 +2,15 @@ package com.example.aswcms.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aswcms.CMSDependencies
 import com.example.aswcms.domain.repositories.AuthenticationRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CMSAppViewModel(private val repository: AuthenticationRepository = CMSDependencies.authenticationRepository) :
+@HiltViewModel
+class CMSAppViewModel @Inject constructor(private val repository: AuthenticationRepository) :
     ViewModel() {
 
     private val _cmsAppState = MutableStateFlow<CMSAppState>(CMSAppState.Splash)

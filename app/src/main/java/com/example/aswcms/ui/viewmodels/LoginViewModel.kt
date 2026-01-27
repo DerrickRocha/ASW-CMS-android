@@ -1,17 +1,19 @@
+package com.example.aswcms.ui.viewmodels
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aswcms.CMSDependencies
 import com.example.aswcms.domain.repositories.AuthenticationRepository
 import com.example.aswcms.domain.repositories.AuthenticationResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel(
-    private val loginRepository: AuthenticationRepository = CMSDependencies.authenticationRepository
-) : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(private val repository: AuthenticationRepository): ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> = _state
@@ -33,7 +35,7 @@ class LoginViewModel(
                 isLoading = true,
                 error = null
             )
-            when (val result = loginRepository.login(token)) {
+            when (val result = repository.login(token)) {
                 is AuthenticationResult.LoginSuccess -> {
                     _state.value = _state.value.copy(
                         isLoading = false,
@@ -66,5 +68,3 @@ sealed interface LoginEffect {
     data object ShowSignInSuccess : LoginEffect
     data class ShowError(val message: String) : LoginEffect
 }
-
-
