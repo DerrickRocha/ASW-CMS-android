@@ -16,4 +16,5 @@
     <string name="add_a_new_store">Add a new store</string>
     <string name="close_dialog">Close dialog</string>
     <string name="save">Save</string>
+    <string name="product_name">Product Name</string>
 </resources>

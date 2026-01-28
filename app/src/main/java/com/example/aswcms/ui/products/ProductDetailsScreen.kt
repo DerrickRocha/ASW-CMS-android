@@ -1,0 +1,232 @@
+package com.example.aswcms.ui.products
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.aswcms.R
+import com.example.aswcms.domain.models.Product
+import com.example.aswcms.domain.models.ProductOption
+import com.example.aswcms.domain.models.ProductOptionChoice
+import com.example.aswcms.ui.theme.ASWCMSTheme
+
+val product = Product(
+    1,
+    "Blue Dream",
+    description = "Blue dream kick your ass weed",
+    basePrice = 6000,
+    true,
+    "",
+    listOf(
+        ProductOption(
+            1,
+            1,
+            "Quantity",
+            choices = listOf(
+                ProductOptionChoice(1, 1, 1, "5 Seeds", 100, -1),
+                ProductOptionChoice(2, 1, 1, "10 Seeds", 100, -1)
+            )
+        )
+    )
+)
+
+@Composable
+fun ProductDetailsScreen() {
+
+
+    ProductDetailsScreenContent(product)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProductDetailsScreenContent(product: Product) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp) // Adds 8.dp vertical space between all items
+        ) {
+            ImageSection()
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("product_name_text_field"),
+                onValueChange = {},
+                value = "",
+                label = { Text(stringResource(R.string.product_name)) })
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .testTag("product_description_text_field"),
+                onValueChange = {},
+                value = "",
+                label = { Text("Product Description") })
+            PriceSection()
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = true,
+                    onCheckedChange = { }
+                )
+                Text("Active")
+            }
+            InventorySection()
+            ProductOptionsSection(product.options)
+        }
+    }
+}
+
+@Composable
+fun InventorySection() {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        TrackInventorySwitch(Modifier.weight(1f))
+        InventoryQuantityField()
+    }
+}
+
+@Composable
+fun InventoryQuantityField(modifier: Modifier = Modifier) {
+    TextField(
+        modifier = modifier.width(120.dp),
+        onValueChange = {},
+        value = "",
+        label = { Text("Quantity") })
+}
+
+@Composable
+fun TrackInventorySwitch(modifier: Modifier) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Switch(
+            checked = false,
+            onCheckedChange = { },
+        )
+        Text("Track Inventory")
+    }
+
+}
+
+@Composable
+fun ProductOptionsSection(options: List<ProductOption>) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text("Options", fontWeight = FontWeight.Bold)
+        Text("Add different options for your product, like variety of sizes and colors.")
+        // add labels for name and choice column
+        options.forEach { option ->
+            OptionListItem(option)
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = {}) {
+            Text("Add option")
+        }
+    }
+}
+
+@Composable
+fun OptionListItem(option: ProductOption) {
+    ListItem(
+        modifier = Modifier,
+        headlineContent = { Text(option.optionChoicesHeadline()) },
+        leadingContent = { Text(option.name) },
+        trailingContent = { OptionActions() }
+    )
+}
+
+private fun ProductOption.optionChoicesHeadline(): String {
+    val choiceNames = this.choices.map { choice -> choice.name }
+    return choiceNames.joinToString(separator = ",")
+}
+
+@Composable
+fun OptionActions() {
+    Row() {
+        IconButton(
+            onClick = { }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = ""
+            )
+        }
+        IconButton(
+            onClick = { }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = ""
+            )
+        }
+    }
+
+}
+
+@Composable
+fun PriceSection() {
+    val onValueChanged: (String) -> Unit = {}
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        TextField(
+            modifier = Modifier.weight(1f),
+            value = "",
+            label = { Text("Price") },
+            onValueChange = onValueChanged,
+            placeholder = { Text("Price") }
+        )
+        TextField(
+            modifier = Modifier.weight(1f),
+            value = "",
+            label = { Text("Sale Price") },
+            onValueChange = onValueChanged
+        )
+    }
+}
+
+@Composable
+fun ImageSection() {
+
+}
+
+@Composable
+@Preview(showSystemUi = true)
+fun ProductDetailsContentPreview() {
+    ASWCMSTheme {
+        Box(Modifier.safeDrawingPadding()) {
+            ProductDetailsScreenContent(product)
+
+        }
+    }
+}
