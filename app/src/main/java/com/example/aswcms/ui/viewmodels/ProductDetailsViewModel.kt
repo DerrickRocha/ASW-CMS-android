@@ -8,6 +8,7 @@ import com.example.aswcms.extensions.toOptionChoicesHeadline
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,54 +29,93 @@ class ProductDetailsViewModel @Inject constructor(
         if (productId > 0) loadProduct()
     }
 
-    fun onIntent(intent: ProductDetailsIntent) {
-        when(intent) {
-            is ProductDetailsIntent.TextFieldIntent -> handleTextFieldIntent(intent)
+    /* ---------- UI STATE UPDATES ---------- */
+
+    fun onNameChange(name: String) {
+        _state.update { it.copy(productName = name) }
+    }
+
+    fun onDescriptionChange(description: String) {
+        _state.update { it.copy(description = description) }
+    }
+
+    fun onPriceChange(priceString: String) {
+        updatePriceField(priceString) { text , cents ->
+            copy(
+                priceString = text,
+                price = cents,
+                isPriceValid = cents != null
+            )
         }
     }
 
-    private fun handleTextFieldIntent(intent: ProductDetailsIntent.TextFieldIntent) {
-        when(intent.event) {
-            is ProductDetailsTextFieldEvent.ActiveChanged -> TODO()
-            is ProductDetailsTextFieldEvent.DescriptionChanges -> TODO()
-            is ProductDetailsTextFieldEvent.NameChanged -> TODO()
-            is ProductDetailsTextFieldEvent.PriceChanged -> TODO()
-            is ProductDetailsTextFieldEvent.TrackInventoryChanged -> TODO()
+    fun onSalePriceChange(salePriceString: String) {
+        updatePriceField(salePriceString) { text: String, cents: Int? ->
+            copy(
+                salePriceString = text,
+                price = cents,
+                isPriceValid = cents != null
+            )
+        }
+    }
+
+    private fun updatePriceField(
+        text: String,
+        update: ProductDetailsState.(String, Int?) -> ProductDetailsState
+    ) {
+        val parsed = text.toCleanAndParsedInt()
+        _state.update { it.update(text, parsed) }
+    }
+
+
+    fun onActiveChange(isActive: Boolean) {
+        _state.update { it.copy(isActive = isActive) }
+    }
+
+    fun onTrackInventoryChange(track: Boolean) {
+        _state.update { it.copy(trackInventory = track) }
+    }
+
+    /* ---------- USER ACTIONS ---------- */
+
+    fun saveProduct() {
+        viewModelScope.launch {
+            // validation, mapping, repository call
         }
     }
 
     private fun loadProduct() {
         viewModelScope.launch {
             val product = repository.getProduct(productId)
-            _state.value = _state.value.copy(
-                productName = product.name,
-                description = product.description,
-                price = product.basePrice,
-                isActive = product.isActive,
-                trackInventory = false,
-                isEditing = true,
-                options = product.options.map { OptionState(name = it.name, optionsString = it.toOptionChoicesHeadline()) }
-            )
+            _state.update {
+                it.copy(
+                    productName = product.name,
+                    description = product.description,
+                    price = product.basePrice,
+                    isActive = product.isActive,
+                    trackInventory = false,
+                    isEditing = true,
+                    options = product.options.map { OptionState(name = it.name, optionsString = it.toOptionChoicesHeadline()) }
+                )
+            }
         }
     }
 }
 
-sealed interface ProductDetailsIntent {
-    data class TextFieldIntent(val event: ProductDetailsTextFieldEvent): ProductDetailsIntent
-}
-
-sealed interface ProductDetailsTextFieldEvent {
-    data class NameChanged(val name: String): ProductDetailsTextFieldEvent
-    data class DescriptionChanges(val description: String): ProductDetailsTextFieldEvent
-    data class PriceChanged(val price: Int): ProductDetailsTextFieldEvent
-    data class ActiveChanged(val isActive: Boolean): ProductDetailsTextFieldEvent
-    data class TrackInventoryChanged(val isTracking: Boolean): ProductDetailsTextFieldEvent
+private fun String.toCleanAndParsedInt(): Int? {
+    if (this.any { !it.isDigit() }) return null
+    return this.toIntOrNull()
 }
 
 data class ProductDetailsState(
     val productName: String = "",
     val description: String = "",
-    val price: Int = 0,
+    val priceString: String = "",
+    val price: Int? = null,
+    val isPriceValid: Boolean = true,
+    val salePriceString: String = "",
+    val salePrice: Int? = null,
+    val isSalePriceValid: Boolean = true,
     val isActive: Boolean = false,
     val trackInventory: Boolean = false,
     val isEditing: Boolean = false,

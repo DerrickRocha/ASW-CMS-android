@@ -40,27 +40,31 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.aswcms.R
 import com.example.aswcms.ui.theme.ASWCMSTheme
 import com.example.aswcms.ui.viewmodels.OptionState
-import com.example.aswcms.ui.viewmodels.ProductDetailsIntent
 import com.example.aswcms.ui.viewmodels.ProductDetailsState
-import com.example.aswcms.ui.viewmodels.ProductDetailsTextFieldEvent
 import com.example.aswcms.ui.viewmodels.ProductDetailsViewModel
-
 
 @Composable
 fun ProductDetailsScreen(viewModel: ProductDetailsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
-    val onTextFieldEvent: (ProductDetailsTextFieldEvent) -> Unit = { event ->
-        viewModel.onIntent(event as ProductDetailsIntent)
-    }
-    val onIntent: (ProductDetailsIntent) -> Unit = viewModel::onIntent
-    ProductDetailsScreenContent(state, onIntent)
+    ProductDetailsScreenContent(
+        state,
+        viewModel::onNameChange,
+        viewModel::onDescriptionChange,
+        viewModel::onPriceChange,
+        viewModel::onActiveChange,
+        viewModel::onSalePriceChange
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailsScreenContent(
     state: ProductDetailsState,
-    intent: (ProductDetailsIntent) -> Unit,
+    onNameChange: (name: String) -> Unit,
+    onDescriptionChange: (description: String) -> Unit,
+    onPriceChange: (price: String) -> Unit,
+    onActiveChange: (isActive: Boolean) -> Unit,
+    onSalePriceChange: (salePrice: String) -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -75,8 +79,7 @@ fun ProductDetailsScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("product_name_text_field"),
-                onValueChange = {
-                },
+                onValueChange = onNameChange,
                 value = "",
                 label = { Text(stringResource(R.string.product_name)) })
             TextField(
@@ -84,14 +87,14 @@ fun ProductDetailsScreenContent(
                     .fillMaxWidth()
                     .height(150.dp)
                     .testTag("product_description_text_field"),
-                onValueChange = {},
+                onValueChange = onDescriptionChange,
                 value = "",
                 label = { Text("Product Description") })
-            PriceSection()
+            PriceSection(onPriceChange, onSalePriceChange)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
                     checked = true,
-                    onCheckedChange = { }
+                    onCheckedChange = onActiveChange
                 )
                 Text("Active")
             }
@@ -185,21 +188,20 @@ fun OptionActions() {
 }
 
 @Composable
-fun PriceSection() {
-    val onValueChanged: (String) -> Unit = {}
+fun PriceSection(onPriceChange: (price: String) -> Unit, onSalePriceChange: (salePrice: String) -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         TextField(
             modifier = Modifier.weight(1f),
             value = "",
             label = { Text("Price") },
-            onValueChange = onValueChanged,
+            onValueChange = onPriceChange,
             placeholder = { Text("Price") }
         )
         TextField(
             modifier = Modifier.weight(1f),
             value = "",
             label = { Text("Sale Price") },
-            onValueChange = onValueChanged
+            onValueChange = onSalePriceChange
         )
     }
 }
@@ -214,8 +216,14 @@ fun ImageSection() {
 fun ProductDetailsContentPreview() {
     ASWCMSTheme {
         Box(Modifier.safeDrawingPadding()) {
-            ProductDetailsScreenContent(ProductDetailsState(), {})
-
+            ProductDetailsScreenContent(
+                ProductDetailsState(),
+                {},
+                { },
+                {},
+                {},
+                {}
+            )
         }
     }
 }
