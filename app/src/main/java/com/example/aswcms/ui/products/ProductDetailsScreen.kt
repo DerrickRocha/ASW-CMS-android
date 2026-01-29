@@ -27,6 +27,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -34,42 +36,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.aswcms.R
-import com.example.aswcms.domain.models.Product
-import com.example.aswcms.domain.models.ProductOption
-import com.example.aswcms.domain.models.ProductOptionChoice
 import com.example.aswcms.ui.theme.ASWCMSTheme
+import com.example.aswcms.ui.viewmodels.OptionState
+import com.example.aswcms.ui.viewmodels.ProductDetailsIntent
+import com.example.aswcms.ui.viewmodels.ProductDetailsState
+import com.example.aswcms.ui.viewmodels.ProductDetailsTextFieldEvent
+import com.example.aswcms.ui.viewmodels.ProductDetailsViewModel
 
-val product = Product(
-    1,
-    "Blue Dream",
-    description = "Blue dream kick your ass weed",
-    basePrice = 6000,
-    true,
-    "",
-    listOf(
-        ProductOption(
-            1,
-            1,
-            "Quantity",
-            choices = listOf(
-                ProductOptionChoice(1, 1, 1, "5 Seeds", 100, -1),
-                ProductOptionChoice(2, 1, 1, "10 Seeds", 100, -1)
-            )
-        )
-    )
-)
 
 @Composable
-fun ProductDetailsScreen() {
-
-
-    ProductDetailsScreenContent(product)
+fun ProductDetailsScreen(viewModel: ProductDetailsViewModel = hiltViewModel()) {
+    val state by viewModel.state.collectAsState()
+    val onTextFieldEvent: (ProductDetailsTextFieldEvent) -> Unit = { event ->
+        viewModel.onIntent(event as ProductDetailsIntent)
+    }
+    val onIntent: (ProductDetailsIntent) -> Unit = viewModel::onIntent
+    ProductDetailsScreenContent(state, onIntent)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailsScreenContent(product: Product) {
+fun ProductDetailsScreenContent(
+    state: ProductDetailsState,
+    intent: (ProductDetailsIntent) -> Unit,
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -83,7 +75,8 @@ fun ProductDetailsScreenContent(product: Product) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("product_name_text_field"),
-                onValueChange = {},
+                onValueChange = {
+                },
                 value = "",
                 label = { Text(stringResource(R.string.product_name)) })
             TextField(
@@ -103,7 +96,7 @@ fun ProductDetailsScreenContent(product: Product) {
                 Text("Active")
             }
             InventorySection()
-            ProductOptionsSection(product.options)
+            ProductOptionsSection(state.options)
         }
     }
 }
@@ -142,7 +135,7 @@ fun TrackInventorySwitch(modifier: Modifier) {
 }
 
 @Composable
-fun ProductOptionsSection(options: List<ProductOption>) {
+fun ProductOptionsSection(options: List<OptionState>) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text("Options", fontWeight = FontWeight.Bold)
         Text("Add different options for your product, like variety of sizes and colors.")
@@ -158,19 +151,15 @@ fun ProductOptionsSection(options: List<ProductOption>) {
 }
 
 @Composable
-fun OptionListItem(option: ProductOption) {
+fun OptionListItem(option: OptionState) {
     ListItem(
         modifier = Modifier,
-        headlineContent = { Text(option.optionChoicesHeadline()) },
+        headlineContent = { Text(option.optionsString) },
         leadingContent = { Text(option.name) },
         trailingContent = { OptionActions() }
     )
 }
 
-private fun ProductOption.optionChoicesHeadline(): String {
-    val choiceNames = this.choices.map { choice -> choice.name }
-    return choiceNames.joinToString(separator = ",")
-}
 
 @Composable
 fun OptionActions() {
@@ -225,7 +214,7 @@ fun ImageSection() {
 fun ProductDetailsContentPreview() {
     ASWCMSTheme {
         Box(Modifier.safeDrawingPadding()) {
-            ProductDetailsScreenContent(product)
+            ProductDetailsScreenContent(ProductDetailsState(), {})
 
         }
     }
