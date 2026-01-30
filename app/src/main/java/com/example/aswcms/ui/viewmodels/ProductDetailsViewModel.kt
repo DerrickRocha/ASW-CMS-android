@@ -54,7 +54,7 @@ class ProductDetailsViewModel @Inject constructor(
             copy(
                 salePriceString = text,
                 price = cents,
-                isPriceValid = cents != null
+                isSalePriceValid = cents != null
             )
         }
     }
@@ -74,6 +74,12 @@ class ProductDetailsViewModel @Inject constructor(
 
     fun onTrackInventoryChange(track: Boolean) {
         _state.update { it.copy(trackInventory = track) }
+    }
+
+    fun onInventoryQuantityChange(inventoryQuantityText: String) {
+        updatePriceField(inventoryQuantityText) { text: String, value: Int? ->
+            copy(inventoryQuantityText = text, inventoryCount = value, isQuantityValid = value != null)
+        }
     }
 
     /* ---------- USER ACTIONS ---------- */
@@ -119,7 +125,10 @@ data class ProductDetailsState(
     val isActive: Boolean = false,
     val trackInventory: Boolean = false,
     val isEditing: Boolean = false,
-    val options: List<OptionState> = emptyList()
+    val options: List<OptionState> = emptyList(),
+    val inventoryQuantityText: String = "",
+    val inventoryCount: Int? = null,
+    val isQuantityValid: Boolean = true
 )
 
 data class OptionState(val name: String = "", val optionsString:String = "")

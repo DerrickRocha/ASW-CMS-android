@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -34,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -52,7 +54,9 @@ fun ProductDetailsScreen(viewModel: ProductDetailsViewModel = hiltViewModel()) {
         viewModel::onDescriptionChange,
         viewModel::onPriceChange,
         viewModel::onActiveChange,
-        viewModel::onSalePriceChange
+        viewModel::onSalePriceChange,
+        viewModel::onTrackInventoryChange,
+        viewModel::onInventoryQuantityChange
     )
 }
 
@@ -65,6 +69,8 @@ fun ProductDetailsScreenContent(
     onPriceChange: (price: String) -> Unit,
     onActiveChange: (isActive: Boolean) -> Unit,
     onSalePriceChange: (salePrice: String) -> Unit,
+    onTrackInventoryChange: (track: Boolean) -> Unit,
+    onInventoryQuantityChange: (inventoryQuantity: String) -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -80,57 +86,84 @@ fun ProductDetailsScreenContent(
                     .fillMaxWidth()
                     .testTag("product_name_text_field"),
                 onValueChange = onNameChange,
-                value = "",
-                label = { Text(stringResource(R.string.product_name)) })
+                value = state.productName,
+                label = { Text(stringResource(R.string.product_name)) },
+            )
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
                     .testTag("product_description_text_field"),
                 onValueChange = onDescriptionChange,
-                value = "",
-                label = { Text("Product Description") })
-            PriceSection(onPriceChange, onSalePriceChange)
+                value = state.description,
+                label = { Text(stringResource(R.string.product_description)) })
+            PriceSection(
+                priceString = state.priceString,
+                isPriceValid = state.isPriceValid,
+                salePriceString = state.salePriceString,
+                isSalePriceValid = state.isSalePriceValid,
+                onPriceChange,
+                onSalePriceChange
+            )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
-                    checked = true,
+                    checked = state.isActive,
                     onCheckedChange = onActiveChange
                 )
                 Text("Active")
             }
-            InventorySection()
+            InventorySection(state.trackInventory, onTrackInventoryChange, state.inventoryQuantityText, state.isQuantityValid, onInventoryQuantityChange)
             ProductOptionsSection(state.options)
         }
     }
 }
 
 @Composable
-fun InventorySection() {
+fun InventorySection(
+    track: Boolean,
+    onTrackInventoryChange: (track: Boolean) -> Unit,
+    quantityText: String,
+    isQuantityValid: Boolean,
+    onQuantityChange: (quantity: String) -> Unit
+) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        TrackInventorySwitch(Modifier.weight(1f))
-        InventoryQuantityField()
+        TrackInventorySwitch(Modifier.weight(1f), track, onTrackInventoryChange)
+        InventoryQuantityField(quantityText, isQuantityValid, onQuantityChange)
     }
 }
 
 @Composable
-fun InventoryQuantityField(modifier: Modifier = Modifier) {
+fun InventoryQuantityField(
+    quantityString: String,
+    isQuantityValid: Boolean,
+    onQuantityChange: (quantity: String) -> Unit
+) {
     TextField(
-        modifier = modifier.width(120.dp),
-        onValueChange = {},
-        value = "",
-        label = { Text("Quantity") })
+        modifier = Modifier.width(120.dp),
+        onValueChange = onQuantityChange,
+        value = quantityString,
+        isError = !isQuantityValid,
+        label = { Text(stringResource(R.string.quantity)) },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number
+        )
+    )
 }
 
 @Composable
-fun TrackInventorySwitch(modifier: Modifier) {
+fun TrackInventorySwitch(
+    modifier: Modifier,
+    track: Boolean,
+    onTrackInventoryChange: (track: Boolean) -> Unit
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Switch(
-            checked = false,
-            onCheckedChange = { },
+            checked = track,
+            onCheckedChange = onTrackInventoryChange,
         )
         Text("Track Inventory")
     }
@@ -166,7 +199,7 @@ fun OptionListItem(option: OptionState) {
 
 @Composable
 fun OptionActions() {
-    Row() {
+    Row {
         IconButton(
             onClick = { }
         ) {
@@ -188,20 +221,35 @@ fun OptionActions() {
 }
 
 @Composable
-fun PriceSection(onPriceChange: (price: String) -> Unit, onSalePriceChange: (salePrice: String) -> Unit) {
+fun PriceSection(
+    priceString: String,
+    isPriceValid: Boolean,
+    salePriceString: String,
+    isSalePriceValid: Boolean,
+    onPriceChange: (price: String) -> Unit,
+    onSalePriceChange: (salePrice: String) -> Unit
+) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         TextField(
             modifier = Modifier.weight(1f),
-            value = "",
-            label = { Text("Price") },
+            value = priceString,
+            label = { Text(stringResource(R.string.price)) },
             onValueChange = onPriceChange,
-            placeholder = { Text("Price") }
+            placeholder = { Text(stringResource(R.string.price)) },
+            isError = !isPriceValid,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number
+            )
         )
         TextField(
             modifier = Modifier.weight(1f),
-            value = "",
-            label = { Text("Sale Price") },
-            onValueChange = onSalePriceChange
+            value = salePriceString,
+            label = { Text(stringResource(R.string.sale_price)) },
+            onValueChange = onSalePriceChange,
+            isError = !isSalePriceValid,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number
+            )
         )
     }
 }
@@ -220,6 +268,8 @@ fun ProductDetailsContentPreview() {
                 ProductDetailsState(),
                 {},
                 { },
+                {},
+                {},
                 {},
                 {},
                 {}
