@@ -1,5 +1,6 @@
 package com.example.aswcms.ui.viewmodels
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -128,7 +129,11 @@ data class ProductDetailsState(
     val options: List<OptionState> = emptyList(),
     val inventoryQuantityText: String = "",
     val inventoryCount: Int? = null,
-    val isQuantityValid: Boolean = true
+    val isQuantityValid: Boolean = true,
+    val mainImage: ImageState? = null,
+    val otherImages: List<ImageState> = emptyList()
 )
 
 data class OptionState(val name: String = "", val optionsString:String = "")
+
+data class ImageState(val url: Uri? = null, val imageId: Int? = null, val productId: Int)
