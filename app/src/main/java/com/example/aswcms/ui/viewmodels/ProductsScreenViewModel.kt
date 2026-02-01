@@ -20,7 +20,7 @@ class ProductsScreenViewModel @Inject constructor(
             _state.value = ProductsScreenState.Loading
             val products = repository.getProductsForStore(storeId)
                 .map { ProductState(it.id, it.name, it.imageUrl) }
-            _state.value = ProductsScreenState.Error
+            _state.value = ProductsScreenState.Products(products = products)
         }
     }
 }
