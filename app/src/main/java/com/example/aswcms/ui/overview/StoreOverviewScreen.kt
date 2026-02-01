@@ -18,11 +18,11 @@ import com.example.aswcms.ui.theme.ASWCMSTheme
 data class OverviewState(val items: List<OverviewItem>)
 data class OverviewItem(val id: OverviewItemId, val title: String)
 
-enum class OverviewItemId {
-    ORDERS,
-    PRODUCTS,
-    CUSTOMERS,
-    INVENTORY,
+sealed interface OverviewItemId {
+    data object Orders: OverviewItemId
+    data class Products(val storeId: Int): OverviewItemId
+    data object Customers: OverviewItemId
+    data object Inventory: OverviewItemId
 }
 
 
@@ -32,10 +32,10 @@ fun StoreOverviewScreen(storeId: Int, onOverviewItemSelected: (OverviewItemId) -
     StoreOverviewContent(
         OverviewState(
             listOf(
-                OverviewItem(OverviewItemId.ORDERS, "Orders"),
-                OverviewItem(OverviewItemId.PRODUCTS, "Products"),
-                OverviewItem(OverviewItemId.CUSTOMERS, "Customers"),
-                OverviewItem(OverviewItemId.INVENTORY, "Inventory")
+                OverviewItem(OverviewItemId.Orders, "Orders"),
+                OverviewItem(OverviewItemId.Products(storeId), "Products"),
+                OverviewItem(OverviewItemId.Customers, "Customers"),
+                OverviewItem(OverviewItemId.Inventory, "Inventory")
             )
         ),
         onOverviewItemSelected
@@ -70,10 +70,10 @@ fun PreviewStoreOverviewScreen() {
         StoreOverviewContent(
             OverviewState(
                 listOf(
-                    OverviewItem(OverviewItemId.ORDERS, "Orders"),
-                    OverviewItem(OverviewItemId.PRODUCTS, "Products"),
-                    OverviewItem(OverviewItemId.CUSTOMERS, "Customers"),
-                    OverviewItem(OverviewItemId.INVENTORY, "Inventory")
+                    OverviewItem(OverviewItemId.Orders, "Orders"),
+                    OverviewItem(OverviewItemId.Products(1), "Products"),
+                    OverviewItem(OverviewItemId.Customers, "Customers"),
+                    OverviewItem(OverviewItemId.Inventory, "Inventory")
                 )
             ),
             { }

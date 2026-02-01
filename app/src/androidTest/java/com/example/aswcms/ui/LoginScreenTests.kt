@@ -1,11 +1,10 @@
 package com.example.aswcms.ui
 
-import LoginState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.example.aswcms.ui.login.LoginScreenMainSection
+import com.example.aswcms.ui.viewmodels.LoginState
 import org.junit.Rule
 import org.junit.Test
 
