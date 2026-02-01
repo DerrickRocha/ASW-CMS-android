@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.aswcms.ui.products
 
 import android.net.Uri
@@ -5,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +20,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -33,6 +35,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -41,9 +44,13 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.aswcms.R
+import com.example.aswcms.extensions.createCameraUri
 import com.example.aswcms.ui.theme.ASWCMSTheme
 import com.example.aswcms.ui.viewmodels.ImageState
 import com.example.aswcms.ui.viewmodels.OptionState
@@ -64,19 +72,42 @@ import com.example.aswcms.ui.viewmodels.ProductDetailsViewModel
 fun ProductDetailsScreen(viewModel: ProductDetailsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
 
+    val tempCameraUri = rememberSaveable{mutableStateOf<Uri?>(null)}
+
     val imagePickerLauncher =
         rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickMultipleVisualMedia()
-        ) { uris ->
-            if (uris.isNotEmpty()) {
-                // onImagesSelected(uris)
-            }
+            contract = ActivityResultContracts.PickVisualMedia()
+        ) { uri ->
+
         }
+    val cameraLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture()) { success ->
+
+        }
+
+    var showImageSourceSheet by rememberSaveable { mutableStateOf(false) }
+
     val onImageButtonClicked = {
+        showImageSourceSheet = true
+    }
+    val onDismissImageOptions = {
+        showImageSourceSheet = false
+    }
+
+    val context = LocalContext.current
+    val fromCameraSelected = {
+        val cameraUri = context.createCameraUri()
+        tempCameraUri.value = cameraUri
+        cameraLauncher.launch(cameraUri)
+        showImageSourceSheet = false
+    }
+    val fromDeviceSelected = {
         imagePickerLauncher.launch(
             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
         )
+        showImageSourceSheet = false
     }
+
     ProductDetailsScreenContent(
         state,
         viewModel::onNameChange,
@@ -87,6 +118,10 @@ fun ProductDetailsScreen(viewModel: ProductDetailsViewModel = hiltViewModel()) {
         viewModel::onTrackInventoryChange,
         viewModel::onInventoryQuantityChange,
         onImageButtonClicked,
+        showImageSourceSheet,
+        fromCameraSelected,
+        fromDeviceSelected,
+        onDismissImageOptions
     )
 }
 
@@ -102,6 +137,10 @@ fun ProductDetailsScreenContent(
     onTrackInventoryChange: (track: Boolean) -> Unit,
     onInventoryQuantityChange: (inventoryQuantity: String) -> Unit,
     onImageButtonClicked: () -> Unit,
+    showImageSourceSheet: Boolean,
+    fromCameraSelected: () -> Unit,
+    fromDeviceSelected: () -> Unit,
+    onDismissImageOptions: () -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -155,6 +194,42 @@ fun ProductDetailsScreenContent(
                 onInventoryQuantityChange
             )
             ProductOptionsSection(state.options)
+            if (showImageSourceSheet)
+                ImageOptionsBottomSheet(
+                    fromCameraSelected = fromCameraSelected,
+                    fromDeviceSelected = fromDeviceSelected,
+                    onDismissImageOptions = onDismissImageOptions
+                )
+        }
+    }
+}
+
+@Composable
+fun ImageOptionsBottomSheet(
+    fromCameraSelected: () -> Unit,
+    fromDeviceSelected: () -> Unit,
+    onDismissImageOptions: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismissImageOptions,
+    ) {
+        Column(
+            Modifier.fillMaxWidth()
+        ) {
+            ListItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = fromCameraSelected),
+                leadingContent = { Text("Add from camera") },
+                headlineContent = {})
+
+            ListItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = fromDeviceSelected),
+                leadingContent = { Text("Add from device") },
+                headlineContent = {})
+
         }
     }
 }
@@ -259,7 +334,6 @@ fun OptionActions() {
             )
         }
     }
-
 }
 
 @Composable
@@ -332,7 +406,11 @@ fun ImageSection(
         if (images.isNotEmpty()) {
             LazyRow(modifier = Modifier.height(50.dp)) {
                 items(images) {
-                    ASWCMSImage(modifier = Modifier.size(50.dp), it.url, "Additional product image.")
+                    ASWCMSImage(
+                        modifier = Modifier.size(50.dp),
+                        it.url,
+                        "Additional product image."
+                    )
                 }
             }
 
@@ -348,17 +426,7 @@ fun ImageSection(
 fun ProductDetailsContentPreview() {
     ASWCMSTheme {
         Box(Modifier.safeDrawingPadding()) {
-            ProductDetailsScreenContent(
-                ProductDetailsState(),
-                {},
-                { },
-                {},
-                {},
-                {},
-                {},
-                {},
-                {},
-            )
+            ImageOptionsBottomSheet({}, {}) { }
         }
     }
 }
