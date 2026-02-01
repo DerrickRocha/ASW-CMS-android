@@ -19,7 +19,10 @@ class MainNavigationState(currentKey: NavKey) {
     data object Orders: NavKey
 
     @Serializable
-    data object Products: NavKey
+    data class Products(val storeId: Int): NavKey
+
+    @Serializable
+    data class Product(val productId: Int): NavKey
 
     @Serializable
     data object Customers: NavKey

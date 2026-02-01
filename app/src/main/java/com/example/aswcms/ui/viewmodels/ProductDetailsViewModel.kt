@@ -29,7 +29,6 @@ class ProductDetailsViewModel @Inject constructor(
 
     init {
         if (productId > 0) loadProduct()
-        loadProduct()
     }
 
     /* ---------- UI STATE UPDATES ---------- */

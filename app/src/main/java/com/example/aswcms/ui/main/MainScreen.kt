@@ -43,6 +43,8 @@ import com.example.aswcms.ui.components.LoadingSection
 import com.example.aswcms.ui.main.MainNavigationState.*
 import com.example.aswcms.ui.overview.OverviewItemId
 import com.example.aswcms.ui.overview.StoreOverviewScreen
+import com.example.aswcms.ui.products.ProductDetailsScreen
+import com.example.aswcms.ui.products.ProductsScreen
 import com.example.aswcms.ui.stores.StoresScreen
 import com.example.aswcms.ui.viewmodels.MainMenuItem
 import com.example.aswcms.ui.viewmodels.MainScreenIntent
@@ -97,11 +99,19 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
 
     val onOverviewItemSelected: (OverviewItemId) -> Unit = { id ->
         when (id) {
-            OverviewItemId.ORDERS -> navigationState.navigate(Orders)
-            OverviewItemId.PRODUCTS -> navigationState.navigate(Products)
-            OverviewItemId.CUSTOMERS -> navigationState.navigate(Customers)
-            OverviewItemId.INVENTORY -> navigationState.navigate(Inventory)
+            OverviewItemId.Orders -> navigationState.navigate(Orders)
+            is OverviewItemId.Products -> {
+                val storeId = id.storeId
+                navigationState.navigate(Products(storeId))
+            }
+
+            OverviewItemId.Customers -> navigationState.navigate(Customers)
+            OverviewItemId.Inventory -> navigationState.navigate(Inventory)
         }
+    }
+
+    val onProductSelected: (productId: Int) -> Unit = { productId ->
+        navigationState.navigate(Product(productId))
     }
 
     ModalNavigationDrawer(
@@ -127,7 +137,14 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
             Modifier
                 .fillMaxSize(),
             topBar = {
-                MainTopAppBar(navigationState.isTopLevel, onNavIconClicked)
+                val current = navigationState.current
+                val title = when(current) {
+                    is Product -> "Product Details"
+                    is StoreOverview -> "Welcome"
+                    is Stores -> "Stores"
+                    else -> { "Products"}
+                }
+                MainTopAppBar(navigationState.isTopLevel, onNavIconClicked, title = title)
             },
             floatingActionButton = {},
         ) { innerPadding ->
@@ -135,7 +152,8 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
                 Modifier.padding(innerPadding),
                 navigationState.backstack,
                 onStoreSelected,
-                onOverviewItemSelected
+                onOverviewItemSelected,
+                onProductSelected
             )
         }
     }
@@ -150,33 +168,15 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
         })
 }
 
-@Composable
-fun MainTopAppBar(isTopLevel: Boolean, onNavIconClicked: () -> Unit) {
-    TopAppBar(
-        modifier = Modifier.fillMaxWidth(),
-        title = { Text(text = stringResource(R.string.welcome)) },
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    onNavIconClicked()
-                }) {
-                Icon(
-                    imageVector = if (isTopLevel) Icons.Filled.Menu else Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = if (isTopLevel) stringResource(R.string.menu) else stringResource(
-                        R.string.navigate_up
-                    )
-                )
-            }
-        }
-    )
-}
+
 
 @Composable
 fun MainNavigationDisplay(
     modifier: Modifier,
     backstack: List<NavKey>,
     onStoreSelected: (Int) -> Unit,
-    onOverviewItemSelected: (OverviewItemId) -> Unit
+    onOverviewItemSelected: (OverviewItemId) -> Unit,
+    onProductSelected: (productId: Int) -> Unit
 ) {
     NavDisplay(
         modifier = modifier
@@ -195,14 +195,38 @@ fun MainNavigationDisplay(
             entry<Orders> {
                 Text(text = "fe")
             }
-            entry<Products> {
-                Text(text = "fi")
+            entry<Products> { entry ->
+                ProductsScreen(storeId = entry.storeId, onProductSelected = onProductSelected)
+            }
+            entry<Product> {
+                ProductDetailsScreen()
             }
             entry<Customers> {
                 Text(text = "fo")
             }
             entry<Inventory> {
                 Text("fum")
+            }
+        }
+    )
+}
+
+@Composable
+fun MainTopAppBar(isTopLevel: Boolean, onNavIconClicked: () -> Unit, title: String?) {
+    TopAppBar(
+        modifier = Modifier.fillMaxWidth(),
+        title = { Text(text = title?: "") },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    onNavIconClicked()
+                }) {
+                Icon(
+                    imageVector = if (isTopLevel) Icons.Filled.Menu else Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = if (isTopLevel) stringResource(R.string.menu) else stringResource(
+                        R.string.navigate_up
+                    )
+                )
             }
         }
     )
