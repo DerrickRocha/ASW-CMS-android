@@ -7,11 +7,25 @@ data class Product(
     val basePrice: Int,
     val isActive: Boolean,
     val imageUrl: String,
-    val options: List<ProductOption>
+    val options: List<ProductOption>,
+    val mainImage: ProductImage?,
+    val additionImages: List<ProductImage>?
 )
 
-data class ProductOption(val id: Int, val productId: Int, val name: String, val choices: List<ProductOptionChoice>)
+data class ProductOption(
+    val id: Int,
+    val productId: Int,
+    val name: String,
+    val choices: List<ProductOptionChoice>
+)
 
-data class ProductOptionChoice(val id: Int, val productId: Int, val productOptionId: Int, val name: String, val priceDelta: Int, val salePriceDelta: Int)
+data class ProductOptionChoice(
+    val id: Int,
+    val productId: Int,
+    val productOptionId: Int,
+    val name: String,
+    val priceDelta: Int,
+    val salePriceDelta: Int
+)
 
 data class ProductImage(val id: Int, val productId: Int, val url: String, val isMain: Boolean)

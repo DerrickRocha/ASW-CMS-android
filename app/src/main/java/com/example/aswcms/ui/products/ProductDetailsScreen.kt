@@ -3,11 +3,7 @@
 package com.example.aswcms.ui.products
 
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,10 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -29,28 +22,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -61,9 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.aswcms.R
-import com.example.aswcms.extensions.createCameraUri
 import com.example.aswcms.ui.theme.ASWCMSTheme
-import com.example.aswcms.ui.viewmodels.ImageState
 import com.example.aswcms.ui.viewmodels.OptionState
 import com.example.aswcms.ui.viewmodels.ProductDetailsState
 import com.example.aswcms.ui.viewmodels.ProductDetailsViewModel
@@ -72,41 +56,7 @@ import com.example.aswcms.ui.viewmodels.ProductDetailsViewModel
 fun ProductDetailsScreen(viewModel: ProductDetailsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
 
-    val tempCameraUri = rememberSaveable{mutableStateOf<Uri?>(null)}
-
-    val imagePickerLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickVisualMedia()
-        ) { uri ->
-
-        }
-    val cameraLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.TakePicture()) { success ->
-
-        }
-
-    var showImageSourceSheet by rememberSaveable { mutableStateOf(false) }
-
-    val onImageButtonClicked = {
-        showImageSourceSheet = true
-    }
-    val onDismissImageOptions = {
-        showImageSourceSheet = false
-    }
-
-    val context = LocalContext.current
-    val fromCameraSelected = {
-        val cameraUri = context.createCameraUri()
-        tempCameraUri.value = cameraUri
-        cameraLauncher.launch(cameraUri)
-        showImageSourceSheet = false
-    }
-    val fromDeviceSelected = {
-        imagePickerLauncher.launch(
-            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-        )
-        showImageSourceSheet = false
-    }
+    val onImageButtonClicked = {}
 
     ProductDetailsScreenContent(
         state,
@@ -117,11 +67,7 @@ fun ProductDetailsScreen(viewModel: ProductDetailsViewModel = hiltViewModel()) {
         viewModel::onSalePriceChange,
         viewModel::onTrackInventoryChange,
         viewModel::onInventoryQuantityChange,
-        onImageButtonClicked,
-        showImageSourceSheet,
-        fromCameraSelected,
-        fromDeviceSelected,
-        onDismissImageOptions
+        onImageButtonClicked
     )
 }
 
@@ -129,18 +75,14 @@ fun ProductDetailsScreen(viewModel: ProductDetailsViewModel = hiltViewModel()) {
 @Composable
 fun ProductDetailsScreenContent(
     state: ProductDetailsState,
-    onNameChange: (name: String) -> Unit,
-    onDescriptionChange: (description: String) -> Unit,
-    onPriceChange: (price: String) -> Unit,
-    onActiveChange: (isActive: Boolean) -> Unit,
-    onSalePriceChange: (salePrice: String) -> Unit,
-    onTrackInventoryChange: (track: Boolean) -> Unit,
-    onInventoryQuantityChange: (inventoryQuantity: String) -> Unit,
-    onImageButtonClicked: () -> Unit,
-    showImageSourceSheet: Boolean,
-    fromCameraSelected: () -> Unit,
-    fromDeviceSelected: () -> Unit,
-    onDismissImageOptions: () -> Unit,
+    onNameChange: (name: String) -> Unit = {},
+    onDescriptionChange: (description: String) -> Unit = {},
+    onPriceChange: (price: String) -> Unit = {},
+    onActiveChange: (isActive: Boolean) -> Unit = {},
+    onSalePriceChange: (salePrice: String) -> Unit = {},
+    onTrackInventoryChange: (track: Boolean) -> Unit = {},
+    onInventoryQuantityChange: (inventoryQuantity: String) -> Unit = {},
+    onImageButtonClicked: () -> Unit = {}
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -194,42 +136,6 @@ fun ProductDetailsScreenContent(
                 onInventoryQuantityChange
             )
             ProductOptionsSection(state.options)
-            if (showImageSourceSheet)
-                ImageOptionsBottomSheet(
-                    fromCameraSelected = fromCameraSelected,
-                    fromDeviceSelected = fromDeviceSelected,
-                    onDismissImageOptions = onDismissImageOptions
-                )
-        }
-    }
-}
-
-@Composable
-fun ImageOptionsBottomSheet(
-    fromCameraSelected: () -> Unit,
-    fromDeviceSelected: () -> Unit,
-    onDismissImageOptions: () -> Unit
-) {
-    ModalBottomSheet(
-        onDismissRequest = onDismissImageOptions,
-    ) {
-        Column(
-            Modifier.fillMaxWidth()
-        ) {
-            ListItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = fromCameraSelected),
-                leadingContent = { Text("Add from camera") },
-                headlineContent = {})
-
-            ListItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = fromDeviceSelected),
-                leadingContent = { Text("Add from device") },
-                headlineContent = {})
-
         }
     }
 }
@@ -389,44 +295,13 @@ fun ASWCMSImage(modifier: Modifier = Modifier, image: Uri?, description: String)
 }
 
 @Composable
-fun ImageSection(
-    mainImage: ImageState?,
-    images: List<ImageState>,
-    onImageButtonClicked: () -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Card {
-            ASWCMSImage(modifier = Modifier.size(200.dp), mainImage?.url, "Main product image.")
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-        if (images.isNotEmpty()) {
-            LazyRow(modifier = Modifier.height(50.dp)) {
-                items(images) {
-                    ASWCMSImage(
-                        modifier = Modifier.size(50.dp),
-                        it.url,
-                        "Additional product image."
-                    )
-                }
-            }
-
-        }
-        TextButton(onClick = onImageButtonClicked) {
-            Text("Add an image")
-        }
-    }
-}
-
-@Composable
 @Preview()
 fun ProductDetailsContentPreview() {
     ASWCMSTheme {
         Box(Modifier.safeDrawingPadding()) {
-            ImageOptionsBottomSheet({}, {}) { }
+            ProductDetailsScreenContent(
+                state = ProductDetailsState()
+            )
         }
     }
 }
