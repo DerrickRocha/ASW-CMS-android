@@ -33,19 +33,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.ui.NavDisplay
+import androidx.navigation.compose.rememberNavController
 import com.example.aswcms.R
 import com.example.aswcms.extensions.resolveMainMenuItemString
 import com.example.aswcms.ui.components.CMSSimpleDialog
-import com.example.aswcms.ui.components.LoadingSection
 import com.example.aswcms.ui.main.MainNavigationState.*
-import com.example.aswcms.ui.overview.OverviewItemId
-import com.example.aswcms.ui.overview.StoreOverviewScreen
-import com.example.aswcms.ui.products.ProductDetailsScreen
-import com.example.aswcms.ui.products.ProductsScreen
-import com.example.aswcms.ui.stores.StoresScreen
+import com.example.aswcms.ui.navigation.MainNavHost
 import com.example.aswcms.ui.viewmodels.MainMenuItem
 import com.example.aswcms.ui.viewmodels.MainScreenIntent
 import com.example.aswcms.ui.viewmodels.MainScreenState
@@ -65,6 +58,7 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val confirmLogoutState = rememberSaveable { mutableStateOf(false) }
+    val navController = rememberNavController()
 
     val onNavIconClicked: () -> Unit = {
         if (navigationState.isTopLevel) {
@@ -91,27 +85,6 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
                 }
             }
         }
-    }
-
-    val onStoreSelected: (Int) -> Unit = { storeId ->
-        viewModel.onIntent(MainScreenIntent.RequestStoreOverView(storeId))
-    }
-
-    val onOverviewItemSelected: (OverviewItemId) -> Unit = { id ->
-        when (id) {
-            OverviewItemId.Orders -> navigationState.navigate(Orders)
-            is OverviewItemId.Products -> {
-                val storeId = id.storeId
-                navigationState.navigate(Products(storeId))
-            }
-
-            OverviewItemId.Customers -> navigationState.navigate(Customers)
-            OverviewItemId.Inventory -> navigationState.navigate(Inventory)
-        }
-    }
-
-    val onProductSelected: (productId: Int) -> Unit = { productId ->
-        navigationState.navigate(Product(productId))
     }
 
     ModalNavigationDrawer(
@@ -148,13 +121,7 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
             },
             floatingActionButton = {},
         ) { innerPadding ->
-            MainNavigationDisplay(
-                Modifier.padding(innerPadding),
-                navigationState.backstack,
-                onStoreSelected,
-                onOverviewItemSelected,
-                onProductSelected
-            )
+            MainNavHost(modifier = Modifier.padding(innerPadding), navController = navController)
         }
     }
     CMSSimpleDialog(
@@ -167,50 +134,6 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
             confirmLogoutState.value = false
         })
 }
-
-
-
-@Composable
-fun MainNavigationDisplay(
-    modifier: Modifier,
-    backstack: List<NavKey>,
-    onStoreSelected: (Int) -> Unit,
-    onOverviewItemSelected: (OverviewItemId) -> Unit,
-    onProductSelected: (productId: Int) -> Unit
-) {
-    NavDisplay(
-        modifier = modifier
-            .fillMaxSize(),
-        backStack = backstack,
-        entryProvider = entryProvider {
-            entry<Stores> {
-                StoresScreen(onStoreClicked = onStoreSelected)
-            }
-            entry<StoreOverview> { key ->
-                StoreOverviewScreen(key.storeId, onOverviewItemSelected)
-            }
-            entry<Loading> {
-                LoadingSection()
-            }
-            entry<Orders> {
-                Text(text = "fe")
-            }
-            entry<Products> { entry ->
-                ProductsScreen(storeId = entry.storeId, onProductSelected = onProductSelected)
-            }
-            entry<Product> {
-                ProductDetailsScreen()
-            }
-            entry<Customers> {
-                Text(text = "fo")
-            }
-            entry<Inventory> {
-                Text("fum")
-            }
-        }
-    )
-}
-
 @Composable
 fun MainTopAppBar(isTopLevel: Boolean, onNavIconClicked: () -> Unit, title: String?) {
     TopAppBar(
