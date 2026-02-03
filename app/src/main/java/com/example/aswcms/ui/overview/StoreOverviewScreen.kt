@@ -16,50 +16,49 @@ import com.example.aswcms.ui.theme.ASWCMSTheme
 
 
 data class OverviewState(val items: List<OverviewItem>)
-data class OverviewItem(val id: OverviewItemId, val title: String)
-
-sealed interface OverviewItemId {
-    data object Orders: OverviewItemId
-    data class Products(val storeId: Int): OverviewItemId
-    data object Customers: OverviewItemId
-    data object Inventory: OverviewItemId
-}
+data class OverviewItem(val title: String, val onClick: () -> Unit)
 
 
 @Composable
-fun StoreOverviewScreen(storeId: Int, onOverviewItemSelected: (OverviewItemId) -> Unit) {
+fun StoreOverviewScreen(
+    onOrdersClicked: () -> Unit,
+    onProductsClicked: () -> Unit,
+    onCustomersClicked: () -> Unit,
+    onInventoryClicked: () -> Unit,
+) {
 
     StoreOverviewContent(
         OverviewState(
             listOf(
-                OverviewItem(OverviewItemId.Orders, "Orders"),
-                OverviewItem(OverviewItemId.Products(storeId), "Products"),
-                OverviewItem(OverviewItemId.Customers, "Customers"),
-                OverviewItem(OverviewItemId.Inventory, "Inventory")
+                OverviewItem("Orders", onOrdersClicked),
+                OverviewItem("Products", onProductsClicked),
+                OverviewItem("Customers", onCustomersClicked),
+                OverviewItem("Inventory", onInventoryClicked)
             )
-        ),
-        onOverviewItemSelected
+        )
     )
 }
 
 @Composable
-fun StoreOverviewContent(state: OverviewState, onItemClicked: (OverviewItemId) -> Unit) {
+fun StoreOverviewContent(
+    state: OverviewState,
+) {
     LazyColumn(
         Modifier
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         items(state.items) { item ->
-            OverviewListItem(item, onItemClicked)
+            OverviewListItem(item.title, item.onClick)
         }
     }
 }
 
 @Composable
-fun OverviewListItem(item: OverviewItem, onItemClicked: (OverviewItemId) -> Unit) {
+fun OverviewListItem(title: String, onItemClicked: () -> Unit) {
     ListItem(
-        modifier = Modifier.clickable(onClick = { onItemClicked(item.id) }),
-        headlineContent = { Text(item.title) }
+        modifier = Modifier.clickable(onClick = onItemClicked),
+        headlineContent = { Text(title) }
     )
 }
 
@@ -70,13 +69,12 @@ fun PreviewStoreOverviewScreen() {
         StoreOverviewContent(
             OverviewState(
                 listOf(
-                    OverviewItem(OverviewItemId.Orders, "Orders"),
-                    OverviewItem(OverviewItemId.Products(1), "Products"),
-                    OverviewItem(OverviewItemId.Customers, "Customers"),
-                    OverviewItem(OverviewItemId.Inventory, "Inventory")
+                    OverviewItem("Orders", {}),
+                    OverviewItem("Products", {}),
+                    OverviewItem("Customers", {}),
+                    OverviewItem("Inventory", {})
                 )
-            ),
-            { }
+            )
         )
     }
 }

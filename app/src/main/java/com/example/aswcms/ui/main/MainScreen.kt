@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,19 +27,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.aswcms.R
 import com.example.aswcms.extensions.resolveMainMenuItemString
 import com.example.aswcms.ui.components.CMSSimpleDialog
-import com.example.aswcms.ui.main.MainNavigationState.*
 import com.example.aswcms.ui.navigation.MainNavHost
+import com.example.aswcms.ui.navigation.Routes
 import com.example.aswcms.ui.viewmodels.MainMenuItem
 import com.example.aswcms.ui.viewmodels.MainScreenIntent
 import com.example.aswcms.ui.viewmodels.MainScreenState
@@ -49,28 +52,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
-    val key = when (state) {
-        is MainScreenState.Overview -> StoreOverview((state as MainScreenState.Overview).storeId)
-        MainScreenState.Stores -> Stores
-        MainScreenState.Loading -> Loading
-    }
-    val navigationState = remember(key) { MainNavigationState(key) }
+
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val confirmLogoutState = rememberSaveable { mutableStateOf(false) }
     val navController = rememberNavController()
 
     val onNavIconClicked: () -> Unit = {
-        if (navigationState.isTopLevel) {
+        if (navController.previousBackStackEntry == null) {
             scope.launch {
-                if (drawerState.isOpen) {
-                    drawerState.close()
-                } else {
-                    drawerState.open()
-                }
+                if (drawerState.isOpen) drawerState.close() else drawerState.open()
             }
         } else {
-            navigationState.navigateUp()
+            navController.navigateUp()
         }
     }
 
@@ -87,16 +82,56 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
         }
     }
 
+    val onStoreClicked: (Int) -> Unit = { storeId ->
+        viewModel.onIntent(MainScreenIntent.RequestStoreOverView(storeId))
+    }
+    val navString = when (state) {
+        MainScreenState.Loading -> Routes.LOADING
+        is MainScreenState.Overview -> Routes.storeOverview((state as MainScreenState.Overview).storeId)
+        MainScreenState.Stores -> Routes.STORES
+    }
+    val onConfirmLogout = {
+        viewModel.onIntent(MainScreenIntent.RequestLogout)
+    }
+    val onDismissLogout = {
+        confirmLogoutState.value = false
+    }
+    MainScreenContent(
+        navController,
+        drawerState,
+        navString,
+        viewModel.menuItems,
+        onNavIconClicked,
+        onNavigationDrawerItemClicked,
+        onStoreClicked,
+        onConfirmLogout,
+        onDismissLogout,
+        confirmLogoutState.value
+    )
+
+
+}
+
+@Composable
+fun MainScreenContent(
+    navController: NavHostController,
+    drawerState: DrawerState,
+    navString: String,
+    menuItems: List<MainMenuItem>,
+    onNavIconClicked: () -> Unit,
+    onNavigationDrawerItemClicked: (MainMenuItem) -> Unit,
+    onStoreClicked: (Int) -> Unit,
+    onConfirmLogout: () -> Unit,
+    onDismissLogout: () -> Unit,
+    showLogout: Boolean
+) {
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet(drawerState) {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
-                    for (item in viewModel.menuItems) {
+                    for (item in menuItems) {
                         NavigationDrawerItem(
-                            selected = when(item) {
-                                MainMenuItem.Stores -> navigationState.current is Stores
-                                else -> false
-                            },
+                            selected = false,
                             label = { Text(stringResource(item.resolveMainMenuItemString())) },
                             onClick = { onNavigationDrawerItemClicked(item) }
                         )
@@ -110,35 +145,44 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
             Modifier
                 .fillMaxSize(),
             topBar = {
-                val current = navigationState.current
-                val title = when(current) {
-                    is Product -> "Product Details"
-                    is StoreOverview -> "Welcome"
-                    is Stores -> "Stores"
-                    else -> { "Products"}
-                }
-                MainTopAppBar(navigationState.isTopLevel, onNavIconClicked, title = title)
+                val title =
+                    when (navController.currentBackStackEntryAsState().value?.destination?.route) {
+                        Routes.STORES -> "Stores"
+                        Routes.ORDERS -> "Orders"
+                        Routes.CUSTOMERS -> "Customers"
+                        Routes.INVENTORY -> "Inventory"
+                        Routes.STORE_OVERVIEW -> "Welcome"
+                        Routes.PRODUCTS -> "Products"
+                        else -> ""
+                    }
+                MainTopAppBar(
+                    navController.previousBackStackEntry == null,
+                    onNavIconClicked,
+                    title = title
+                )
             },
             floatingActionButton = {},
         ) { innerPadding ->
-            MainNavHost(modifier = Modifier.padding(innerPadding), navController = navController)
+            MainNavHost(
+                modifier = Modifier.padding(innerPadding),
+                navController = navController,
+                startRoute = navString,
+                onStoreClicked
+            )
         }
     }
     CMSSimpleDialog(
         message = stringResource(R.string.would_you_like_to_logout),
-        show = confirmLogoutState.value,
-        onConfirmSelected = {
-            viewModel.onIntent(MainScreenIntent.RequestLogout)
-        },
-        onDismissRequest = {
-            confirmLogoutState.value = false
-        })
+        show = showLogout,
+        onConfirmSelected = onConfirmLogout,
+        onDismissRequest = onDismissLogout)
 }
+
 @Composable
 fun MainTopAppBar(isTopLevel: Boolean, onNavIconClicked: () -> Unit, title: String?) {
     TopAppBar(
         modifier = Modifier.fillMaxWidth(),
-        title = { Text(text = title?: "") },
+        title = { Text(text = title ?: "") },
         navigationIcon = {
             IconButton(
                 onClick = {
