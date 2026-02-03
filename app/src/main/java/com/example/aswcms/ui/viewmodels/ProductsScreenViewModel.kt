@@ -1,4 +1,5 @@
 package com.example.aswcms.ui.viewmodels
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aswcms.domain.repositories.ProductRepository
@@ -10,10 +11,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductsScreenViewModel @Inject constructor(
+    handle: SavedStateHandle,
     private val repository: ProductRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow<ProductsScreenState>(ProductsScreenState.Loading)
     val state: StateFlow<ProductsScreenState> = _state
+    private val storeId: Int =
+        handle["storeId"]
+            ?: error("storeId missing")
+
+    init {
+        loadProducts(storeId)
+    }
 
     fun loadProducts(storeId: Int) {
         viewModelScope.launch {

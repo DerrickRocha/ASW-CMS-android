@@ -25,15 +25,9 @@ import com.example.aswcms.ui.viewmodels.ProductsScreenViewModel
 
 @Composable
 fun ProductsScreen(
-    storeId: Int? = null,
     viewModel: ProductsScreenViewModel = hiltViewModel(),
     onProductSelected: (productId: Int) -> Unit
 ) {
-    LaunchedEffect(storeId) {
-        storeId?.let {
-            viewModel.loadProducts(it)
-        }
-    }
     val state by viewModel.state.collectAsState()
     ProductsScreenContent(state, onProductSelected)
 }
