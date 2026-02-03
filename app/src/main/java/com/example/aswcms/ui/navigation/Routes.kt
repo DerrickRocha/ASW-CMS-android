@@ -9,6 +9,7 @@ object Routes {
     const val CUSTOMERS = "customers"
     const val INVENTORY = "inventory"
     const val LOADING = "loading"
+    const val ACCOUNT = "account"
 
     fun storeOverview(storeId: Int) = "store_overview/$storeId"
     fun products(storeId: Int) = "products/$storeId"

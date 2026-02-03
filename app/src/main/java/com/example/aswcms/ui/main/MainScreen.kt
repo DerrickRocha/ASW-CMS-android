@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,8 +52,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsState()
-
-
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val confirmLogoutState = rememberSaveable { mutableStateOf(false) }
@@ -84,10 +83,20 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
     val onStoreClicked: (Int) -> Unit = { storeId ->
         viewModel.onIntent(MainScreenIntent.RequestStoreOverView(storeId))
     }
-    val navString = when (state) {
-        MainScreenState.Loading -> Routes.LOADING
-        is MainScreenState.Overview -> Routes.storeOverview((state as MainScreenState.Overview).storeId)
-        MainScreenState.Stores -> Routes.STORES
+    LaunchedEffect(state) {
+        when (state) {
+            MainScreenState.Loading -> navController.navigate(Routes.LOADING) {
+                popUpTo(0)
+            }
+
+            is MainScreenState.Overview -> navController.navigate(Routes.storeOverview((state as MainScreenState.Overview).storeId)) {
+                popUpTo(
+                    0
+                )
+            }
+
+            MainScreenState.Stores -> navController.navigate(Routes.STORES) { popUpTo(0) }
+        }
     }
     val onConfirmLogout = {
         viewModel.onIntent(MainScreenIntent.RequestLogout)
@@ -98,7 +107,6 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
     MainScreenContent(
         navController,
         drawerState,
-        navString,
         viewModel.menuItems,
         onNavIconClicked,
         onNavigationDrawerItemClicked,
@@ -113,7 +121,6 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
 fun MainScreenContent(
     navController: NavHostController,
     drawerState: DrawerState,
-    navString: String,
     menuItems: List<MainMenuItem>,
     onNavIconClicked: () -> Unit,
     onNavigationDrawerItemClicked: (MainMenuItem) -> Unit,
@@ -127,8 +134,10 @@ fun MainScreenContent(
             ModalDrawerSheet(drawerState) {
                 Column(Modifier.verticalScroll(rememberScrollState())) {
                     for (item in menuItems) {
+                        val currentRoute =
+                        navController.currentBackStackEntryAsState().value?.destination?.route
                         NavigationDrawerItem(
-                            selected = false,
+                            selected = currentRoute == item.route,
                             label = { Text(stringResource(item.resolveMainMenuItemString())) },
                             onClick = { onNavigationDrawerItemClicked(item) }
                         )
@@ -163,7 +172,6 @@ fun MainScreenContent(
             MainNavHost(
                 modifier = Modifier.padding(innerPadding),
                 navController = navController,
-                startRoute = navString,
                 onStoreClicked
             )
         }
@@ -172,7 +180,8 @@ fun MainScreenContent(
         message = stringResource(R.string.would_you_like_to_logout),
         show = showLogout,
         onConfirmSelected = onConfirmLogout,
-        onDismissRequest = onDismissLogout)
+        onDismissRequest = onDismissLogout
+    )
 }
 
 @Composable

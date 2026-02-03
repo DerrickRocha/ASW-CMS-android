@@ -17,12 +17,11 @@ import com.example.aswcms.ui.stores.StoresScreen
 fun MainNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    startRoute: String = Routes.LOADING,
     onStoreSelected: (storeId: Int) -> Unit
 ) {
     NavHost(
         navController = navController,
-        startDestination = startRoute,
+        startDestination = Routes.LOADING,
         modifier = modifier.fillMaxSize()
     ) {
 
@@ -33,7 +32,7 @@ fun MainNavHost(
             route = Routes.STORE_OVERVIEW,
             arguments = listOf(navArgument("storeId") { type = NavType.IntType })
         ) { backstackEntry ->
-            val storeId = backstackEntry.arguments!!.getInt("storeId")
+            val storeId = backstackEntry.arguments?.getInt("storeId")?: return@composable
             StoreOverviewScreen(
                 onOrdersClicked = { navController.navigate(Routes.ORDERS) },
                 onProductsClicked = {

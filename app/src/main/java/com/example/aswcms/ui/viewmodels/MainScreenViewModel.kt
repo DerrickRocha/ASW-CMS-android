@@ -3,6 +3,7 @@ package com.example.aswcms.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.aswcms.domain.repositories.AuthenticationRepository
+import com.example.aswcms.ui.navigation.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -49,9 +50,18 @@ class MainScreenViewModel @Inject constructor(private val repository: Authentica
 }
 
 sealed interface MainMenuItem {
-    data object Account : MainMenuItem
-    data object Stores : MainMenuItem
-    data object Logout : MainMenuItem
+    val route: String?
+    data object Account : MainMenuItem {
+        override val route = Routes.ACCOUNT
+    }
+
+    data object Stores : MainMenuItem {
+        override val route = Routes.STORES
+    }
+
+    data object Logout : MainMenuItem{
+        override val route: String? = null
+    }
 }
 
 sealed interface MainScreenState {
