@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -108,8 +107,6 @@ fun MainScreen(viewModel: MainScreenViewModel = hiltViewModel()) {
         onDismissLogout,
         confirmLogoutState.value
     )
-
-
 }
 
 @Composable
