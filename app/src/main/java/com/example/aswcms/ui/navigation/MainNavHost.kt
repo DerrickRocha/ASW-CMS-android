@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.example.aswcms.ui.components.LoadingSection
 import com.example.aswcms.ui.overview.StoreOverviewScreen
 import com.example.aswcms.ui.products.ProductDetailsScreen
+import com.example.aswcms.ui.products.ProductImagesScreen
 import com.example.aswcms.ui.products.ProductsScreen
 import com.example.aswcms.ui.stores.StoresScreen
 
@@ -58,11 +59,21 @@ fun MainNavHost(
         composable(
             route = Routes.PRODUCT,
             arguments = listOf(navArgument("productId") { type = NavType.IntType })
-        ) {
-            ProductDetailsScreen()
+        ) { backstackEntry ->
+            val storeId = backstackEntry.arguments?.getInt("productId")?: return@composable
+            ProductDetailsScreen {
+                navController.navigate(Routes.productImages(storeId))
+            }
         }
-        composable(route = Routes.LOADING) {
+        composable(
+            route = Routes.LOADING) {
             LoadingSection()
+        }
+        composable(
+            route = Routes.PRODUCT_IMAGES,
+            arguments = listOf(navArgument("productId") { type = NavType.IntType })
+        ) {
+            ProductImagesScreen()
         }
 
     }

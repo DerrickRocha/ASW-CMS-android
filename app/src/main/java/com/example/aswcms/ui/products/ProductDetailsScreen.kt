@@ -53,10 +53,8 @@ import com.example.aswcms.ui.viewmodels.ProductDetailsState
 import com.example.aswcms.ui.viewmodels.ProductDetailsViewModel
 
 @Composable
-fun ProductDetailsScreen(viewModel: ProductDetailsViewModel = hiltViewModel()) {
+fun ProductDetailsScreen(viewModel: ProductDetailsViewModel = hiltViewModel(), onImageButtonClicked: () -> Unit) {
     val state by viewModel.state.collectAsState()
-
-    val onImageButtonClicked = {}
 
     ProductDetailsScreenContent(
         state,
