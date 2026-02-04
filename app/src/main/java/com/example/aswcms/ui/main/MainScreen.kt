@@ -159,6 +159,7 @@ fun MainScreenContent(
                         Routes.INVENTORY -> "Inventory"
                         Routes.STORE_OVERVIEW -> "Welcome"
                         Routes.PRODUCTS -> "Products"
+                        Routes.PRODUCT -> "Product"
                         else -> ""
                     }
                 MainTopAppBar(

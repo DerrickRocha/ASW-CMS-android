@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.aswcms.ui.components.LoadingSection
 import com.example.aswcms.ui.overview.StoreOverviewScreen
+import com.example.aswcms.ui.products.ProductDetailsScreen
 import com.example.aswcms.ui.products.ProductsScreen
 import com.example.aswcms.ui.stores.StoresScreen
 
@@ -54,8 +55,11 @@ fun MainNavHost(
                 )
             })
         }
-        composable(route = Routes.PRODUCT) {
-
+        composable(
+            route = Routes.PRODUCT,
+            arguments = listOf(navArgument("productId") { type = NavType.IntType })
+        ) {
+            ProductDetailsScreen()
         }
         composable(route = Routes.LOADING) {
             LoadingSection()

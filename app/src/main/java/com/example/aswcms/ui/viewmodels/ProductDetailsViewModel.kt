@@ -101,7 +101,7 @@ class ProductDetailsViewModel @Inject constructor(
 
     private fun loadProduct() {
         viewModelScope.launch {
-            val product = repository.getProduct(productId)
+            val product = repository.getProduct(productId)?: throw ClassNotFoundException("Product not found")
             _state.update { state ->
                 state.copy(
                     productName = product.name,
